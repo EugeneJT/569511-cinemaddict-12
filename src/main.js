@@ -306,3 +306,6 @@ const filmsMostCommentedContainer = filmsListExtraContainer[1];
 
 getFilmsItem(filmsTopRatedContainer, 2);
 getFilmsItem(filmsMostCommentedContainer, 2);
+
+const footerContainer = document.querySelector(`.footer`);
+render(footerContainer, createFilmsPupupTemplate(), `beforeend`);
