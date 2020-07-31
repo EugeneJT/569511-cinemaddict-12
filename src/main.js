@@ -278,6 +278,10 @@ const renderFilmsItem = (container, count) => {
   }
 };
 
+const renderPopFilms = (title) => {
+  render(filmsContainer, title, `beforeend`);
+};
+
 const mainContainer = document.querySelector(`.main`);
 const headerContainer = document.querySelector(`.header`);
 
@@ -297,8 +301,8 @@ renderFilmsItem(filmsListContainer, 5);
 const filmsList = filmsContainer.querySelector(`.films-list`);
 render(filmsList, createShowMoreButtonTemplate(), `beforeend`);
 
-render(filmsContainer, createTopRatedTemplate(), `beforeend`);
-render(filmsContainer, createMostCommentedTemplate(), `beforeend`);
+renderPopFilms(createTopRatedTemplate());
+renderPopFilms(createMostCommentedTemplate());
 
 const filmsListExtraContainer = filmsContainer.querySelectorAll(`.films-list--extra .films-list__container`);
 const filmsTopRatedContainer = filmsListExtraContainer[0];
