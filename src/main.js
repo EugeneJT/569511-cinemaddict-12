@@ -272,7 +272,7 @@ const render = (container, template, place) => {
   container.insertAdjacentHTML(place, template);
 };
 
-const getFilmsItem = (container, count) => {
+const renderFilmsItem = (container, count) => {
   for (let i = 0; i < count; i++) {
     render(container, createFilmsCardTemplate(), `beforeend`);
   }
@@ -292,7 +292,7 @@ render(filmsContainer, createFilmsListTemplate(), `beforeend`);
 
 const filmsListContainer = filmsContainer.querySelector(`.films-list__container`);
 
-getFilmsItem(filmsListContainer, 5);
+renderFilmsItem(filmsListContainer, 5);
 
 const filmsList = filmsContainer.querySelector(`.films-list`);
 render(filmsList, createShowMoreButtonTemplate(), `beforeend`);
@@ -304,8 +304,8 @@ const filmsListExtraContainer = filmsContainer.querySelectorAll(`.films-list--ex
 const filmsTopRatedContainer = filmsListExtraContainer[0];
 const filmsMostCommentedContainer = filmsListExtraContainer[1];
 
-getFilmsItem(filmsTopRatedContainer, 2);
-getFilmsItem(filmsMostCommentedContainer, 2);
+renderFilmsItem(filmsTopRatedContainer, 2);
+renderFilmsItem(filmsMostCommentedContainer, 2);
 
 const footerContainer = document.querySelector(`.footer`);
 render(footerContainer, createFilmsPupupTemplate(), `beforeend`);
