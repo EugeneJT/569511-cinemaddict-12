@@ -250,19 +250,10 @@ const createFilmsPupupTemplate = () => {
   );
 };
 
-const createTopRatedTemplate = () => {
+const createExtraFilmTemplate = (title) => {
   return (
     `<section class="films-list--extra">
-      <h2 class="films-list__title">Top rated</h2>
-      <div class="films-list__container"></div>
-    </section>`
-  );
-};
-
-const createMostCommentedTemplate = () => {
-  return (
-    `<section class="films-list--extra">
-      <h2 class="films-list__title">Most commented</h2>
+      <h2 class="films-list__title">${title}</h2>
       <div class="films-list__container"></div>
     </section>`
   );
@@ -278,9 +269,6 @@ const renderFilmsItem = (container, count) => {
   }
 };
 
-const renderPopFilms = (title) => {
-  render(filmsContainer, title, `beforeend`);
-};
 
 const mainContainer = document.querySelector(`.main`);
 const headerContainer = document.querySelector(`.header`);
@@ -301,8 +289,10 @@ renderFilmsItem(filmsListContainer, 5);
 const filmsList = filmsContainer.querySelector(`.films-list`);
 render(filmsList, createShowMoreButtonTemplate(), `beforeend`);
 
-renderPopFilms(createTopRatedTemplate());
-renderPopFilms(createMostCommentedTemplate());
+
+render(filmsContainer, createExtraFilmTemplate(`Top rated`), `beforeend`);
+render(filmsContainer, createExtraFilmTemplate(`Most commented`), `beforeend`);
+
 
 const filmsListExtraContainer = filmsContainer.querySelectorAll(`.films-list--extra .films-list__container`);
 const filmsTopRatedContainer = filmsListExtraContainer[0];
