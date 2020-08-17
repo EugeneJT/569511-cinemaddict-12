@@ -1,13 +1,10 @@
 export const createCommentItems = (items) => {
-  let comment = ``;
-
-  items.forEach((item) =>{
+  return items.reduce((result, item) => {
     const {emoji, text, author, day} = item;
 
     const commentDayFormat = day.toLocaleString(`en-ZA`, {year: `numeric`, month: `numeric`, day: `numeric`, hour: `numeric`, minute: `numeric`});
 
-    comment = comment +
-    `<li class="film-details__comment">
+    result += `<li class="film-details__comment">
       <span class="film-details__comment-emoji">
         <img src="./images/emoji/${emoji}" width="55" height="55" alt="emoji-smile">
       </span>
@@ -20,7 +17,7 @@ export const createCommentItems = (items) => {
         </p>
         </div>
     </li>`;
-  });
 
-  return comment;
+    return result;
+  }, ``);
 };

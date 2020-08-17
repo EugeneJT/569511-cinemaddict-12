@@ -5,15 +5,7 @@ export const createFilmsPupupTemplate = (filmCard) => {
 
   const popupReleaseDate = releaseDate.toLocaleString(`en-GB`, {year: `numeric`, month: `long`, day: `numeric`});
 
-  const createGenreItem = (arr) => {
-    return arr.map((item) => {
-      return `<span class="film-details__genre">${item}</span>`;
-    }).join(`\n`);
-  };
-
-  const genre = createGenreItem(genres);
   const commentItem = createCommentItems(comments);
-
 
   return `<section class="film-details">
       <form class="film-details__inner" action="" method="get">
@@ -68,7 +60,7 @@ export const createFilmsPupupTemplate = (filmCard) => {
                 <tr class="film-details__row">
                   <td class="film-details__term">Genres</td>
                   <td class="film-details__cell">
-                    ${genre}
+                  <span class="film-details__genre">${genres}</span>
                   </td>
                 </tr>
               </table>
