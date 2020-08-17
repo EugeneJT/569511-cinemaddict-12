@@ -23,7 +23,7 @@ const generateComments = () => {
   const randomCommentsCount = getRandomInteger(MIN_COMMENTS_COUNT, MAX_COMMENTS_COUNT);
 
   for (let i = 0; i < randomCommentsCount; i++) {
-    let comment = {
+    const comment = {
       emoji: getRandomItem(COMMENT_EMOJIS),
       text: getRandomItem(COMMENT_TEXT),
       author: getRandomItem(COMMENT_USERS),
