@@ -29,10 +29,10 @@ export const COMMENT_USERS = [
 ];
 
 export const COMMENT_TEXT = [
-  'Interesting setting and a good cast',
-  'Booooooooooring',
-  'Very very old. Meh',
-  'Almost two hours? Seriously?'
+  `Interesting setting and a good cast`,
+  `Booooooooooring`,
+  `Very very old. Meh`,
+  `Almost two hours? Seriously?`
 ];
 
 export const FILM_TITLES = [
