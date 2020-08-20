@@ -1,6 +1,7 @@
+import {createElement} from "../utils.js";
 import {createCommentItems} from "../view/comments-list.js";
 
-export const createFilmsPupupTemplate = (filmCard) => {
+const createFilmsPupupTemplate = (filmCard) => {
   const {poster, age, title, comments, origianlTitle, genres, rating, filmDirector, screenwriters, actors, releaseDate, duration, country, description} = filmCard;
 
   const popupReleaseDate = releaseDate.toLocaleString(`en-GB`, {year: `numeric`, month: `long`, day: `numeric`});
@@ -125,3 +126,26 @@ export const createFilmsPupupTemplate = (filmCard) => {
       </form>
     </section>`;
 };
+
+export default class Popup {
+  constructor(filmCard) {
+    this._filmCard = filmCard;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createFilmsPupupTemplate(this._filmCard);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
