@@ -1,12 +1,35 @@
 import {createElement} from "../utils.js";
-import {createCommentItems} from "../view/comments-list.js";
 
 const createFilmsPupupTemplate = (filmCard) => {
   const {poster, age, title, comments, origianlTitle, genres, rating, filmDirector, screenwriters, actors, releaseDate, duration, country, description} = filmCard;
 
   const popupReleaseDate = releaseDate.toLocaleString(`en-GB`, {year: `numeric`, month: `long`, day: `numeric`});
 
-  const commentItem = createCommentItems(comments);
+  const createCommentItems = (items) => {
+    return items.reduce((result, item) => {
+      const {emoji, text, author, day} = item;
+
+      const commentDayFormat = day.toLocaleString(`en-ZA`, {year: `numeric`, month: `numeric`, day: `numeric`, hour: `numeric`, minute: `numeric`});
+
+      result += `<li class="film-details__comment">
+        <span class="film-details__comment-emoji">
+          <img src="./images/emoji/${emoji}" width="55" height="55" alt="emoji-smile">
+        </span>
+        <div>
+          <p class="film-details__comment-text">${text}</p>
+          <p class="film-details__comment-info">
+            <span class="film-details__comment-author">${author}</span>
+            <span class="film-details__comment-day">${commentDayFormat}</span>
+            <button class="film-details__comment-delete">Delete</button>
+          </p>
+          </div>
+      </li>`;
+
+      return result;
+    }, ``);
+  };
+
+  const commentItems = createCommentItems(comments);
 
   return `<section class="film-details">
       <form class="film-details__inner" action="" method="get">
@@ -89,7 +112,7 @@ const createFilmsPupupTemplate = (filmCard) => {
             <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">4</span></h3>
 
             <ul class="film-details__comments-list">
-              ${commentItem}
+              ${commentItems}
             </ul>
 
             <div class="film-details__new-comment">

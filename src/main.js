@@ -20,36 +20,44 @@ const COUNT_TOP_RATED_FILMS = 2;
 const COUNT_MOST_COMMENTED_FILMS = 2;
 
 const renderFilm = (filmListElement, film) => {
-  const filmComponent = new FilmView(film);
-  const filmPopupComponent = new PopupView(film);
+  const filmComponentElement = new FilmView(film).getElement();
+  let filmPopupComponent = null;
 
-  const replaceFilmToPopup = () => {
-    filmListElement.replaceChild(filmPopupComponent.getElement(), filmComponent.getElement());
-  };
+  const showPopup = () => {
+    hidePopup();
 
-  const replacePopupToFilm = () => {
-    filmListElement.replaceChild(filmComponent.getElement(), filmPopupComponent.getElement());
-  };
+    filmPopupComponent = new PopupView(film);
 
-  const onEscKeyDown = (evt) => {
-    if (evt.key === `Escape` || evt.key === `Esc`) {
+    filmPopupComponent.getElement().querySelector(`.film-details__close-btn`).addEventListener(`submit`, (evt) => {
       evt.preventDefault();
-      replacePopupToFilm();
-      document.removeEventListener(`keydown`, onEscKeyDown);
+      hidePopup();
+    });
+
+    const onEscKeyDown = (evt) => {
+      if (evt.key === `Escape` || evt.key === `Esc`) {
+        evt.preventDefault();
+        hidePopup();
+        document.removeEventListener(`keydown`, onEscKeyDown);
+      }
+    };
+
+    document.addEventListener(`keydown`, onEscKeyDown);
+
+    document.body.appendChild(filmPopupComponent.getElement(), filmComponentElement);
+  };
+
+  const hidePopup = () => {
+    if (filmPopupComponent !== null) {
+      document.body.removeChild(filmPopupComponent.getElement());
+      filmPopupComponent = null;
     }
   };
 
-  filmComponent.getElement().querySelector(`.film-card__poster`).addEventListener(`click`, () => {
-    replaceFilmToPopup();
-    document.addEventListener(`keydown`, onEscKeyDown);
+  filmComponentElement.querySelector(`.film-card__poster`).addEventListener(`click`, () => {
+    showPopup();
   });
 
-  filmPopupComponent.getElement().querySelector(`.film-details__close-btn`).addEventListener(`submit`, (evt) => {
-    evt.preventDefault();
-    replacePopupToFilm();
-  });
-
-  render(filmListElement, filmComponent.getElement());
+  render(filmListElement, filmComponentElement);
 };
 
 const films = new Array(FILMS_COUNT).fill().map(createfilmCard);
