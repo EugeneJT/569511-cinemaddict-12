@@ -28,13 +28,15 @@ const renderFilm = (filmListElement, film) => {
 
     filmPopupComponent = new PopupView(film);
 
-    filmPopupComponent.getElement().querySelector(`.film-details__close-btn`).addEventListener(`submit`, (evt) => {
+    filmPopupComponent.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, (evt) => {
       evt.preventDefault();
       hidePopup();
     });
 
     const onEscKeyDown = (evt) => {
-      if (evt.key === `Escape` || evt.key === `Esc`) {
+      const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
+
+      if (isEscKey) {
         evt.preventDefault();
         hidePopup();
         document.removeEventListener(`keydown`, onEscKeyDown);
@@ -53,9 +55,17 @@ const renderFilm = (filmListElement, film) => {
     }
   };
 
-  filmComponentElement.querySelector(`.film-card__poster`).addEventListener(`click`, () => {
-    showPopup();
+
+  filmComponentElement.querySelectorAll(`.film-card__poster, .film-card__title, .film-card__comments`)
+  .forEach((element) => {
+    element.addEventListener(`click`, (evt) => {
+      if (element.tagName === `a`) {
+        evt.preventDefault();
+      }
+      showPopup();
+    });
   });
+
 
   render(filmListElement, filmComponentElement);
 };
