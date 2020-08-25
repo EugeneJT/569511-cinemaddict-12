@@ -116,4 +116,15 @@ export const AGE_RATING = [
   `18+`
 ];
 
+export const FILMS_COUNT = 0;
+export const FILMS_COUNT_PER_STEP = 5;
+
+export const COUNT_TOP_RATED_FILMS = 2;
+export const COUNT_MOST_COMMENTED_FILMS = 2;
+
+export const KeyCode = {
+  ESCAPE: `Escape`,
+  ESC: `Esc`
+};
+
 
