@@ -67,7 +67,6 @@ const renderFilm = (filmListElement, film) => {
 };
 
 const films = new Array(FILMS_COUNT).fill().map(createfilmCard);
-const filters = generateFilter(films);
 
 const renderFilmsItem = (container, count) => {
   for (let i = 0; i < count; i++) {
@@ -78,28 +77,11 @@ const renderFilmsItem = (container, count) => {
 const siteMainElement = document.querySelector(`.main`);
 const headerContainer = document.querySelector(`.header`);
 
-render(headerContainer, new ProfileView().getElement());
-render(siteMainElement, new FilterView(filters).getElement());
-render(siteMainElement, new SortView().getElement());
-
-
 const filmsSectionComponent = new FilmsSectionView();
-render(siteMainElement, filmsSectionComponent.getElement());
+const filmsList = new FilmsListView();
+const filmsContainer = new FilmsContainerView();
 
-if (films.length <= 0) {
-  const noFilm = new NoFilmView();
-  render(filmsSectionComponent.getElement(), noFilm.getElement());
-
-} else {
-  const filmsList = new FilmsListView();
-  const filmsContainer = new FilmsContainerView();
-  render(filmsSectionComponent.getElement(), filmsList.getElement());
-  render(filmsList.getElement(), filmsContainer.getElement());
-
-  const minStep = Math.min(films.length, FILMS_COUNT_PER_STEP);
-  renderFilmsItem(filmsContainer.getElement(), minStep);
-
-
+const renderLoadMoreButton = () => {
   if (films.length > FILMS_COUNT_PER_STEP) {
     let renderedFilmCount = FILMS_COUNT_PER_STEP;
 
@@ -123,8 +105,9 @@ if (films.length <= 0) {
 
     });
   }
+};
 
-
+const renderExtraFilms = () => {
   render(filmsSectionComponent.getElement(), new ExtraFilmTemplateView(`Top rated`).getElement());
   render(filmsSectionComponent.getElement(), new ExtraFilmTemplateView(`Most commented`).getElement());
 
@@ -134,6 +117,32 @@ if (films.length <= 0) {
 
   renderFilmsItem(filmsTopRatedContainer, COUNT_TOP_RATED_FILMS);
   renderFilmsItem(filmsMostCommentedContainer, COUNT_MOST_COMMENTED_FILMS);
-}
+};
 
+const renderContent = () => {
+  const filters = generateFilter(films);
 
+  render(headerContainer, new ProfileView().getElement());
+  render(siteMainElement, new FilterView(filters).getElement());
+  render(siteMainElement, new SortView().getElement());
+  render(siteMainElement, filmsSectionComponent.getElement());
+
+  if (films.length <= 0) {
+    const noFilm = new NoFilmView();
+    render(filmsSectionComponent.getElement(), noFilm.getElement());
+
+  } else {
+
+    render(filmsSectionComponent.getElement(), filmsList.getElement());
+    render(filmsList.getElement(), filmsContainer.getElement());
+
+    const minStep = Math.min(films.length, FILMS_COUNT_PER_STEP);
+    renderFilmsItem(filmsContainer.getElement(), minStep);
+
+    renderLoadMoreButton();
+
+    renderExtraFilms();
+  }
+};
+
+renderContent();

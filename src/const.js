@@ -116,7 +116,7 @@ export const AGE_RATING = [
   `18+`
 ];
 
-export const FILMS_COUNT = 0;
+export const FILMS_COUNT = 12;
 export const FILMS_COUNT_PER_STEP = 5;
 
 export const COUNT_TOP_RATED_FILMS = 2;
