@@ -4,7 +4,7 @@ import SortView from "./view/sort.js";
 import FilmView from "./view/films-card.js";
 import FilmsSectionView from "./view/films-section.js";
 import FilmsListView from "./view/films-list.js";
-import NoFilmView from "./view/films-list.js";
+import NoFilmView from "./view/no-film.js";
 import FilmsContainerView from "./view/films-container.js";
 import LoadMoreButtonView from "./view/load-more-button.js";
 import PopupView from "./view/films-popup.js";
@@ -80,6 +80,8 @@ const headerContainer = document.querySelector(`.header`);
 const filmsSectionComponent = new FilmsSectionView();
 const filmsList = new FilmsListView();
 const filmsContainer = new FilmsContainerView();
+const filters = generateFilter(films);
+
 
 const renderLoadMoreButton = () => {
   if (films.length > FILMS_COUNT_PER_STEP) {
@@ -120,8 +122,6 @@ const renderExtraFilms = () => {
 };
 
 const renderContent = () => {
-  const filters = generateFilter(films);
-
   render(headerContainer, new ProfileView().getElement());
   render(siteMainElement, new FilterView(filters).getElement());
   render(siteMainElement, new SortView().getElement());
