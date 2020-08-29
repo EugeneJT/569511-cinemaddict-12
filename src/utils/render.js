@@ -1,3 +1,5 @@
+import Abstract from "../view/abstract.js";
+
 export const RenderPosition = {
   AFTERBEGIN: `afterbegin`,
   BEFOREEND: `beforeend`
@@ -32,33 +34,29 @@ export const createElement = (template) => {
 // то есть быть чем-то вроде <nav><a>Link 1</a><a>Link 2</a></nav>,
 // а не просто <a>Link 1</a><a>Link 2</a>
 
+export const replace = (newChild, oldChild) => {
+  if (oldChild instanceof Abstract) {
+    oldChild = oldChild.getElement();
+  }
 
-export const getRandomInteger = (a = 0, b = 1) => {
-  const lower = Math.ceil(Math.min(a, b));
-  const upper = Math.floor(Math.max(a, b));
+  if (newChild instanceof Abstract) {
+    newChild = newChild.getElement();
+  }
 
-  return Math.floor(lower + Math.random() * (upper - lower + 1));
+  const parent = oldChild.parentElement;
+
+  if (parent === null || oldChild === null || newChild === null) {
+    throw new Error(`Can't replace unexisting elements`);
+  }
+
+  parent.replaceChild(newChild, oldChild);
 };
 
-export const getRandomFractionInteger = (a = 0, b = 1) => {
-  const randomInteger = Math.random() * (b - a) + a;
-  const randomFractionInteger = Math.floor(randomInteger * 10) / 10;
+export const remove = (component) => {
+  if (!(component instanceof Abstract)) {
+    throw new Error(`Can remove only components`);
+  }
 
-  return randomFractionInteger;
-};
-
-export const getRandomItem = (array) => {
-  return array[getRandomInteger(0, array.length - 1)];
-};
-
-export const getRandomBoolean = () => {
-  return Math.random() > 0.5;
-};
-
-export const getRandomArray = (array) => {
-  return array.filter(getRandomBoolean);
-};
-
-export const getRandomItems = (array) => {
-  return getRandomArray(array).join();
+  component.getElement().remove();
+  component.removeElement();
 };
