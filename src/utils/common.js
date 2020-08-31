@@ -28,3 +28,19 @@ export const getRandomArray = (array) => {
 export const getRandomItems = (array) => {
   return getRandomArray(array).join();
 };
+
+export const getCapitalizedFirstLetter = (string) => {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+};
+
+export function sortTopRated(filmsArray) {
+  filmsArray.sort(function (a, b) {
+    return b.rating - a.rating;
+  });
+}
+
+export function sortMostComments(filmsArray) {
+  filmsArray.sort(function (a, b) {
+    return b.comments - a.comments;
+  });
+}

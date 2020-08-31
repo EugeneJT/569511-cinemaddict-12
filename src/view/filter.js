@@ -1,13 +1,20 @@
 import AbstractView from "./abstract.js";
+import {getCapitalizedFirstLetter} from "../utils/common.js";
 
 const createFilterItemTemplate = (filter) => {
 
   const {name, count} = filter;
-  const title = name.toUpperCase();
+  const title = getCapitalizedFirstLetter(name);
+
+  const createFilterCountTemplate = () => {
+    return `<span class="main-navigation__item-count">
+      ${count}
+    </span>`;
+  };
 
   return (
     `
-      <a href="#${name}" class="main-navigation__item">${title} <span class="main-navigation__item-count">${count}</span></a>
+      <a href="#${name}" class="main-navigation__item">${title}${name !== `all` ? createFilterCountTemplate() : ` movies`}</a>
     `
   );
 };
