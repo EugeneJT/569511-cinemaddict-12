@@ -1,16 +1,14 @@
-import ProfileView from "./view/profile.js";
-import FilterView from "./view/filter.js";
-import SortView from "./view/sort.js";
-import FilmView from "./view/films-card.js";
-import FilmsSectionView from "./view/films-section.js";
-import FilmsListView from "./view/films-list.js";
-import NoFilmView from "./view/no-film.js";
-import FilmsContainerView from "./view/films-container.js";
-import LoadMoreButtonView from "./view/load-more-button.js";
-import PopupView from "./view/films-popup.js";
-import ExtraFilmTemplateView from "./view/extra-film.js";
+import ProfileView from "../view/profile.js";
+import SortView from "../view/sort.js";
+import FilmView from "../view/films-card.js";
+import FilmsListView from "../view/films-list.js";
+import NoFilmView from "../view/no-film.js";
+import FilmsContainerView from "../view/films-container.js";
+import LoadMoreButtonView from "../view/load-more-button.js";
+import PopupView from "../view/films-popup.js";
+import ExtraFilmTemplateView from "../view/extra-film.js";
 import {render} from "../utils/render.js";
-import {FILMS_COUNT_PER_STEP, COUNT_TOP_RATED_FILMS, COUNT_MOST_COMMENTED_FILMS, KeyCode} from "./const.js";
+import {FILMS_COUNT_PER_STEP, COUNT_TOP_RATED_FILMS, COUNT_MOST_COMMENTED_FILMS, KeyCode} from "../const.js";
 
 
 export default class Movies {
@@ -19,11 +17,8 @@ export default class Movies {
 
     this._profileComponent = new ProfileView();
     this._sortComponent = new SortView();
-    this._filmsSectionComponent = new FilmsSectionView();
     this._filmsListContainerComponent = new FilmsContainerView();
-    this._filterComponent = new FilterView();
     this._filmsListComponent = new FilmsListView();
-    this._filmComponent = new FilmView();
     this._noFilmComponent = new NoFilmView();
     this._extraFilmComponent = new ExtraFilmTemplateView();
     this._loadMoreButtonComponent = new LoadMoreButtonView();
@@ -32,8 +27,6 @@ export default class Movies {
 
   init(films) {
     this._films = films;
-
-    render(this._moviesContainer, this._filmListComponent);
 
     this._renderContent();
   }
@@ -44,7 +37,7 @@ export default class Movies {
       this._renderNoFilms();
     } else {
 
-      render(this._filmsSectionComponent.getElement(), this._filmsListComponent.getElement());
+      render(this._moviesContainer.getElement(), this._filmsListComponent.getElement());
       render(this._filmsListComponent.getElement(), this._filmsListContainerComponent.getElement());
 
       const minStep = Math.min(this._films.length, FILMS_COUNT_PER_STEP);
@@ -58,8 +51,8 @@ export default class Movies {
   _renderExtraFilms() {
     const siteMainElement = document.querySelector(`.main`);
 
-    render(this._filmsSectionComponent, new ExtraFilmTemplateView(`Top rated`).getElement());
-    render(this._filmsSectionComponent, new ExtraFilmTemplateView(`Most commented`).getElement());
+    render(this._moviesContainer.getElement(), new ExtraFilmTemplateView(`Top rated`).getElement());
+    render(this._moviesContainer.getElement(), new ExtraFilmTemplateView(`Most commented`).getElement());
 
     const filmsListExtraContainer = siteMainElement.querySelectorAll(`.films-list--extra .films-list__container`);
     const filmsTopRatedContainer = filmsListExtraContainer[0];
@@ -82,7 +75,7 @@ export default class Movies {
       this._loadMoreButtonComponent.setClickHandler(() => {
         this._films
           .slice(renderedFilmCount, renderedFilmCount + FILMS_COUNT_PER_STEP)
-          .forEach((film) => this._renderFilm(this._filmsListContainerComponent, film));
+          .forEach((film) => this._renderFilm(this._filmsListContainerComponent.getElement(), film));
 
         renderedFilmCount += FILMS_COUNT_PER_STEP;
 
@@ -92,6 +85,8 @@ export default class Movies {
         }
 
       });
+
+      render(this._filmsListComponent.getElement(), this._loadMoreButtonComponent.getElement());
     }
   }
 
@@ -131,14 +126,14 @@ export default class Movies {
     };
 
     filmComponentElement.querySelectorAll(`.film-card__poster, .film-card__title, .film-card__comments`)
-    .forEach((element) => {
-      element.addEventListener(`click`, (evt) => {
-        if (element.tagName === `a`) {
-          evt.preventDefault();
-        }
-        showPopup();
+      .forEach((element) => {
+        element.addEventListener(`click`, (evt) => {
+          if (element.tagName === `a`) {
+            evt.preventDefault();
+          }
+          showPopup();
+        });
       });
-    });
 
     render(filmListElement, filmComponentElement);
   }
