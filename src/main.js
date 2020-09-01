@@ -1,6 +1,5 @@
 import ProfileView from "./view/profile.js";
 import FilterView from "./view/filter.js";
-import SortView from "./view/sort.js";
 import StatisticView from "./view/statistic.js";
 import FilmsSectionView from "./view/films-section.js";
 import {FILMS_COUNT} from "./const.js";
@@ -21,7 +20,6 @@ const filters = generateFilter(films);
 
 render(headerContainer, new ProfileView().getElement());
 render(siteMainElement, new FilterView(filters).getElement());
-render(siteMainElement, new SortView().getElement());
 
 const filmsSection = new FilmsSectionView();
 render(siteMainElement, filmsSection.getElement());
