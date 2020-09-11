@@ -28,21 +28,43 @@ export default class Film extends AbstractView {
   constructor(filmCard) {
     super();
     this._filmCard = filmCard;
-    this._clickHandler = this._clickHandler.bind(this);
+    this._filmDetailsClickHandler = this._filmDetailsClickHandler.bind(this);
+    this._controlsClickHandler = this._controlsClickHandler.bind(this);
   }
 
   getTemplate() {
     return createFilmsCardTemplate(this._filmCard);
   }
 
-  _clickHandler() {
-    this._callback.click();
+  _filmDetailsClickHandler(evt) {
+    evt.preventDefault();
+    if (evt.target.classList.contains(`film-card__poster`) || evt.target.classList.contains(`film-card__title`) || evt.target.classList.contains(`film-card__comments`)) {
+      this._callback.filmDetailsClick();
+    }
   }
 
-  setClickHandler(callback) {
-    this._callback.click = callback;
-    this.getElement().querySelector(`.film-card__title`).addEventListener(`click`, this._clickHandler);
-    this.getElement().querySelector(`.film-card__poster`).addEventListener(`click`, this._clickHandler);
-    this.getElement().querySelector(`.film-card__comments`).addEventListener(`click`, this._clickHandler);
+  _controlsClickHandler(evt) {
+    evt.preventDefault();
+    switch (true) {
+      case evt.target.classList.contains(`film-card__controls-item--add-to-watchlist`):
+        this._callback.controlsClick(Object.assign({}, this._filmCard, {isWatch: !this._filmCard.isWatch}));
+        break;
+      case evt.target.classList.contains(`film-card__controls-item--mark-as-watched`):
+        this._callback.controlsClick(Object.assign({}, this._filmCard, {isHistory: !this._filmCard.isHistory}));
+        break;
+      case evt.target.classList.contains(`film-card__controls-item--favorite`):
+        this._callback.controlsClick(Object.assign({}, this._filmCard, {isFavorites: !this._filmCard.isFavorites}));
+        break;
+    }
+  }
+
+  setControlsClickHandler(callback) {
+    this._callback.controlsClick = callback;
+    this.getElement().querySelector(`.film-card__controls`).addEventListener(`click`, this._controlsClickHandler);
+  }
+
+  setFilmDetailsClickHandler(callback) {
+    this._callback.filmDetailsClick = callback;
+    this.getElement().addEventListener(`click`, this._filmDetailsClickHandler);
   }
 }

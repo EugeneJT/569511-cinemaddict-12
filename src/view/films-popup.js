@@ -156,11 +156,27 @@ export default class Popup extends AbstractView {
     this._filmCard = filmCard;
 
     this._editClickHandler = this._editClickHandler.bind(this);
+    this.setControlsToggleHandler(this._callback.controlsToggle);
 
   }
 
   getTemplate() {
     return createFilmsPupupTemplate(this._filmCard);
+  }
+
+  _controlsToggleHandler(evt) {
+    evt.preventDefault();
+    switch (evt.target.id) {
+      case `watchlist`:
+        this._callback.controlsToggle(Object.assign({}, Popup.parseDataToFilm(this._filmCard), {isWatch: evt.target.checked}));
+        break;
+      case `watched`:
+        this._callback.controlsToggle(Object.assign({}, Popup.parseDataToFilm(this._filmCard), {isHistory: evt.target.checked}));
+        break;
+      case `favorite`:
+        this._callback.controlsToggle(Object.assign({}, Popup.parseDataToFilm(this._filmCard), {isFavorites: evt.target.checked}));
+        break;
+    }
   }
 
   _editClickHandler(evt) {
@@ -171,5 +187,10 @@ export default class Popup extends AbstractView {
   setEditClickHandler(callback) {
     this._callback.editClick = callback;
     this.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, this._editClickHandler);
+  }
+
+  setControlsToggleHandler(callback) {
+    this._callback.controlsToggle = callback;
+    this.getElement().querySelector(`.film-details__controls`).addEventListener(`change`, this._controlsToggleHandler);
   }
 }
