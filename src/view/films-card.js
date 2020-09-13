@@ -33,7 +33,7 @@ export default class Film extends AbstractView {
   constructor(filmCard) {
     super();
     this._filmCard = filmCard;
-    this._filmDetailsClickHandler = this._filmDetailsClickHandler.bind(this);
+    this._FilmPopupClickHandler = this._FilmPopupClickHandler.bind(this);
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
     this._watchedClickHandler = this._watchedClickHandler.bind(this);
     this._watchListClickHandler = this._watchListClickHandler.bind(this);
@@ -43,10 +43,10 @@ export default class Film extends AbstractView {
     return createFilmsCardTemplate(this._filmCard);
   }
 
-  _filmDetailsClickHandler(evt) {
+  _FilmPopupClickHandler(evt) {
     evt.preventDefault();
     if (evt.target.classList.contains(`film-card__poster`) || evt.target.classList.contains(`film-card__title`) || evt.target.classList.contains(`film-card__comments`)) {
-      this._callback.filmDetailsClick();
+      this._callback.FilmPopupClick();
     }
   }
 
@@ -80,8 +80,8 @@ export default class Film extends AbstractView {
     this.getElement().querySelector(`.film-card__controls-item--add-to-watchlist`).addEventListener(`click`, this._watchListClickHandler);
   }
 
-  setFilmDetailsClickHandler(callback) {
-    this._callback.filmDetailsClick = callback;
-    this.getElement().addEventListener(`click`, this._filmDetailsClickHandler);
+  setFilmPopupClickHandler(callback) {
+    this._callback.FilmPopupClick = callback;
+    this.getElement().addEventListener(`click`, this._FilmPopupClickHandler);
   }
 }

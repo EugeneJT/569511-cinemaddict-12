@@ -16,7 +16,7 @@ export default class FilmCard {
     this._popUpComponent = null;
     this._mode = Mode.DEFAULT;
 
-    this._handlerFilmDetailsClick = this._handlerFilmDetailsClick.bind(this);
+    this._handlerFilmPopupClick = this._handlerFilmPopupClick.bind(this);
     this._handlerFavoriteClick = this._handlerFavoriteClick.bind(this);
     this._handlerWatchedClick = this._handlerWatchedClick.bind(this);
     this._handlerWatchListClick = this._handlerWatchListClick.bind(this);
@@ -34,7 +34,7 @@ export default class FilmCard {
     this._filmCardComponent = new FilmView(film);
     this._popUpComponent = new PopupView(film);
 
-    this._filmCardComponent.setFilmDetailsClickHandler(this._handlerFilmDetailsClick);
+    this._filmCardComponent.setFilmPopupClickHandler(this._handlerFilmPopupClick);
     this._filmCardComponent.setFavoriteClickHandler(this._handlerFavoriteClick);
     this._filmCardComponent.setWatchedClickHandler(this._handlerWatchedClick);
     this._filmCardComponent.setWatchListClickHandler(this._handlerWatchListClick);
@@ -50,11 +50,11 @@ export default class FilmCard {
     }
 
     if (this._mode === Mode.DEFAULT || this._mode === Mode.POPUP) {
-      replace(this._filmCardComponent.getElement(), prevFilmCardComponent.getElement());
+      replace(this._filmCardComponent, prevFilmCardComponent);
     }
 
     if (this._mode === Mode.POPUP) {
-      replace(this._popUpComponent.getElement(), prevPopUpComponent.getElement());
+      replace(this._popUpComponent, prevPopUpComponent);
     }
 
     remove(prevFilmCardComponent);
@@ -110,17 +110,12 @@ export default class FilmCard {
 
   _openPopUp() {
     render(this._popUpContainer, this._popUpComponent.getElement());
-    if (this._isPopUpReOpened) {
-      // this._popUpComponent.restoreHandlers();
-    }
     document.addEventListener(`keydown`, this._onEscKeyDown);
     this._changeMode();
     this._mode = Mode.POPUP;
   }
 
   _closePopUp() {
-    this._isPopUpReOpened = true;
-    // this._popUpComponent.reset(this._film);
     remove(this._popUpComponent);
     document.removeEventListener(`keydown`, this._onEscKeyDown);
     this._mode = Mode.DEFAULT;
@@ -130,7 +125,7 @@ export default class FilmCard {
     this._changeFilm(film);
   }
 
-  _handlerFilmDetailsClick() {
+  _handlerFilmPopupClick() {
     this._openPopUp();
   }
 

@@ -143,3 +143,8 @@ export const FilmsType = {
   TOP_RATED: `top rated`,
   MOST_COMMENTED: `most commented`
 };
+
+export const Emoji = {
+  WIDTH: 55,
+  HEIGHT: 55
+};
