@@ -4,7 +4,6 @@ import FilmsListView from "../view/films-list.js";
 import NoFilmView from "../view/no-film.js";
 import FilmsContainerView from "../view/films-container.js";
 import LoadMoreButtonView from "../view/load-more-button.js";
-import PopupView from "../view/films-popup.js";
 import ExtraFilmTemplateView from "../view/extra-film.js";
 import {render} from "../utils/render.js";
 import {sortTopRated, sortMostComments, updateItem} from "../utils/common.js";
@@ -22,6 +21,10 @@ export default class Movies {
     this._moviesContainerElement = this._moviesContainer.getElement();
     this._currentSortType = SortType.DEFAULT;
 
+    this._allFilmPresenter = {};
+    this._topRatedFilmPresenter = {};
+    this._mostCommentedFilmPresenter = {};
+
     this._profileComponent = new ProfileView();
     this._sortComponent = new SortView();
     this._filmsListContainerComponent = new FilmsContainerView();
@@ -29,11 +32,10 @@ export default class Movies {
     this._noFilmComponent = new NoFilmView();
     this._extraFilmComponent = new ExtraFilmTemplateView();
     this._loadMoreButtonComponent = new LoadMoreButtonView();
-    this._popupComponent = new PopupView();
 
-    this._handleFilmCardChange = this._handleFilmCardChange.bind(this);
-    this._handleModeChange = this._handleModeChange.bind(this);
-    this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
+    this._handlerFilmCardChange = this._handlerFilmCardChange.bind(this);
+    this._handlerModeChange = this._handlerModeChange.bind(this);
+    this._handlerSortTypeChange = this._handlerSortTypeChange.bind(this);
 
   }
 
@@ -42,18 +44,18 @@ export default class Movies {
     // 1. В отличии от сортировки по любому параметру,
     // исходный порядок можно сохранить только одним способом -
     // сохранив исходный массив:
-    this._sourcedfilms = films.slice();
+    this._sourcedFilms = films.slice();
 
     this._renderContent();
   }
 
-  _handleModeChange() {
+  _handlerModeChange() {
     Object.values(this._allFilmPresenter).forEach((presenter) => presenter.resetView());
     Object.values(this._topRatedFilmPresenter).forEach((presenter) => presenter.resetView());
     Object.values(this._mostCommentedFilmPresenter).forEach((presenter) => presenter.resetView());
   }
 
-  _handleFilmCardChange(updatedFilm) {
+  _handlerFilmCardChange(updatedFilm) {
     this._films = updateItem(this._films, updatedFilm);
     this._sourcedFilms = updateItem(this._sourcedFilms, updatedFilm);
     const allFilmPresenter = this._allFilmPresenter[updatedFilm.id];
@@ -89,7 +91,7 @@ export default class Movies {
     this._currentSortType = sortType;
   }
 
-  _handleSortTypeChange(sortType) {
+  _handlerSortTypeChange(sortType) {
     if (this._currentSortType === sortType) {
       return;
     }
@@ -111,7 +113,7 @@ export default class Movies {
 
   _renderSort() {
     render(this._moviesContainerElement, this._sortComponent.getElement());
-    this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
+    this._sortComponent.setSortTypeChangeHandler(this._handlerSortTypeChange);
   }
 
   _clearFilmList() {
@@ -119,16 +121,16 @@ export default class Movies {
     this._renderedFilmCount = FILMS_COUNT_PER_STEP;
   }
 
-  _renderFilmsItem(container, count, elem) {
+  _renderFilmsItem(container, count, elem, type) {
     for (let i = 0; i < count; i++) {
-      this._renderFilm(container, elem[i]);
+      this._renderFilm(container, elem[i], type);
     }
   }
 
   _renderFilmList() {
     const minStep = Math.min(this._films.length, FILMS_COUNT_PER_STEP);
 
-    this._renderFilmsItem(this._filmsListContainerComponent.getElement(), minStep, this._films);
+    this._renderFilmsItem(this._filmsListContainerComponent.getElement(), minStep, this._films, FilmsType.ALL);
     this._renderLoadMoreButton();
   }
 
@@ -167,8 +169,8 @@ export default class Movies {
     const filmsTopRatedContainer = filmsListExtraContainer[0];
     const filmsMostCommentedContainer = filmsListExtraContainer[1];
 
-    this._renderFilmsItem(filmsTopRatedContainer, COUNT_TOP_RATED_FILMS, topRateArray);
-    this._renderFilmsItem(filmsMostCommentedContainer, COUNT_MOST_COMMENTED_FILMS, topComments);
+    this._renderFilmsItem(filmsTopRatedContainer, COUNT_TOP_RATED_FILMS, topRateArray, FilmsType.TOP_RATED);
+    this._renderFilmsItem(filmsMostCommentedContainer, COUNT_MOST_COMMENTED_FILMS, topComments, FilmsType.MOST_COMMENTED);
   }
 
   _renderLoadMoreButton() {
@@ -178,7 +180,7 @@ export default class Movies {
       this._loadMoreButtonComponent.setClickHandler(() => {
         this._films
           .slice(renderedFilmCount, renderedFilmCount + FILMS_COUNT_PER_STEP)
-          .forEach((film) => this._renderFilm(this._filmsListContainerComponent.getElement(), film));
+          .forEach((film) => this._renderFilm(this._filmsListContainerComponent.getElement(), film, FilmsType.ALL));
 
         renderedFilmCount += FILMS_COUNT_PER_STEP;
 
@@ -194,7 +196,7 @@ export default class Movies {
   }
 
   _renderFilm(container, film, type) {
-    const filmPresenter = new FilmCard(container, this._handleFilmCardChange, this._handleModeChange);
+    const filmPresenter = new FilmCard(container, this._handlerFilmCardChange, this._handlerModeChange);
     filmPresenter.init(film);
     switch (type) {
       case FilmsType.ALL:

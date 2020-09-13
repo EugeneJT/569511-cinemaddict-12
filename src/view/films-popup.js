@@ -1,9 +1,13 @@
 import AbstractView from "./abstract.js";
 
 const createFilmsPupupTemplate = (filmCard) => {
-  const {poster, age, title, comments, origianlTitle, genres, rating, filmDirector, screenwriters, actors, releaseDate, duration, country, description} = filmCard;
+  const {poster, age, title, comments, origianlTitle, genres, rating, filmDirector, screenwriters, actors, releaseDate, duration, country, description, isFavorite, isToWatchList, isWatched} = filmCard;
 
   const popupReleaseDate = releaseDate.toLocaleString(`en-GB`, {year: `numeric`, month: `long`, day: `numeric`});
+
+  const watchListClass = isToWatchList ? `film-card__controls-item--active` : ``;
+  const isWatchedClass = isWatched ? `film-card__controls-item--active` : ``;
+  const isFavoriteClass = isFavorite ? `film-card__controls-item--active` : ``;
 
   const createCommentItems = (items) => {
     return items.reduce((result, item) => {
@@ -97,13 +101,13 @@ const createFilmsPupupTemplate = (filmCard) => {
 
           <section class="film-details__controls">
             <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist">
-            <label for="watchlist" class="film-details__control-label film-details__control-label--watchlist">Add to watchlist</label>
+            <label for="watchlist" class="film-details__control-label film-details__control-label--watchlist ${watchListClass}">Add to watchlist</label>
 
             <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched">
-            <label for="watched" class="film-details__control-label film-details__control-label--watched">Already watched</label>
+            <label for="watched" class="film-details__control-label film-details__control-label--watched ${isWatchedClass}">Already watched</label>
 
             <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite">
-            <label for="favorite" class="film-details__control-label film-details__control-label--favorite">Add to favorites</label>
+            <label for="favorite" class="film-details__control-label film-details__control-label--favorite ${isFavoriteClass}">Add to favorites</label>
           </section>
         </div>
 
@@ -155,42 +159,53 @@ export default class Popup extends AbstractView {
     super();
     this._filmCard = filmCard;
 
-    this._editClickHandler = this._editClickHandler.bind(this);
-    this.setControlsToggleHandler(this._callback.controlsToggle);
-
+    this._closeClickHandler = this._closeClickHandler.bind(this);
+    this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
+    this._watchedClickHandler = this._watchedClickHandler.bind(this);
+    this._watchListClickHandler = this._watchListClickHandler.bind(this);
   }
 
   getTemplate() {
     return createFilmsPupupTemplate(this._filmCard);
   }
 
-  _controlsToggleHandler(evt) {
+  _closeClickHandler(evt) {
     evt.preventDefault();
-    switch (evt.target.id) {
-      case `watchlist`:
-        this._callback.controlsToggle(Object.assign({}, Popup.parseDataToFilm(this._filmCard), {isWatch: evt.target.checked}));
-        break;
-      case `watched`:
-        this._callback.controlsToggle(Object.assign({}, Popup.parseDataToFilm(this._filmCard), {isHistory: evt.target.checked}));
-        break;
-      case `favorite`:
-        this._callback.controlsToggle(Object.assign({}, Popup.parseDataToFilm(this._filmCard), {isFavorites: evt.target.checked}));
-        break;
-    }
+    this._callback.closeClick();
   }
 
-  _editClickHandler(evt) {
+  setCloseClickHandler(callback) {
+    this._callback.closeClick = callback;
+    this.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, this._closeClickHandler);
+  }
+
+  _favoriteClickHandler(evt) {
     evt.preventDefault();
-    this._callback.editClick();
+    this._callback.favoriteClick();
+  }
+  _watchedClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.watchedClick();
   }
 
-  setEditClickHandler(callback) {
-    this._callback.editClick = callback;
-    this.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, this._editClickHandler);
+  _watchListClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.watchListClick();
   }
 
-  setControlsToggleHandler(callback) {
-    this._callback.controlsToggle = callback;
-    this.getElement().querySelector(`.film-details__controls`).addEventListener(`change`, this._controlsToggleHandler);
+  setFavoriteClickHandler(callback) {
+    this._callback.favoriteClick = callback;
+    this.getElement().querySelector(`.film-details__control-label--favorite`).addEventListener(`click`, this._favoriteClickHandler);
   }
+
+  setWatchedClickHandler(callback) {
+    this._callback.watchedClick = callback;
+    this.getElement().querySelector(`.film-details__control-label--watched`).addEventListener(`click`, this._watchedClickHandler);
+  }
+
+  setWatchListClickHandler(callback) {
+    this._callback.watchListClick = callback;
+    this.getElement().querySelector(`.film-details__control-label--watchlist`).addEventListener(`click`, this._watchListClickHandler);
+  }
+
 }

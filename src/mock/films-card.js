@@ -35,10 +35,11 @@ const generateComments = () => {
   return comments;
 };
 
-export const createfilmCard = () => {
+export const createfilmCard = (id) => {
   const filmsTitle = getRandomItem(FILM_TITLES);
 
   return {
+    id,
     title: filmsTitle,
     origianlTitle: filmsTitle,
     rating: getRandomFractionInteger(MIN_RATING_VALUE, MAX_RATING_VALUE),

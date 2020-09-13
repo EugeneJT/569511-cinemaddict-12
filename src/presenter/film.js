@@ -16,9 +16,11 @@ export default class FilmCard {
     this._popUpComponent = null;
     this._mode = Mode.DEFAULT;
 
-    this._handleFilmDetailsClick = this._handleFilmDetailsClick.bind(this);
-    this._handleControlsChange = this._handleControlsChange.bind(this);
-    this._handleCloseButtonClick = this._handleCloseButtonClick.bind(this);
+    this._handlerFilmDetailsClick = this._handlerFilmDetailsClick.bind(this);
+    this._handlerFavoriteClick = this._handlerFavoriteClick.bind(this);
+    this._handlerWatchedClick = this._handlerWatchedClick.bind(this);
+    this._handlerWatchListClick = this._handlerWatchListClick.bind(this);
+    this._handlerCloseButtonClick = this._handlerCloseButtonClick.bind(this);
     this._onEscKeyDown = this._onEscKeyDown.bind(this);
   }
 
@@ -32,22 +34,27 @@ export default class FilmCard {
     this._filmCardComponent = new FilmView(film);
     this._popUpComponent = new PopupView(film);
 
-    this._filmCardComponent.setFilmDetailsClickHandler(this._handleFilmDetailsClick);
-    this._filmCardComponent.setControlsClickHandler(this._handleControlsChange);
-    this._popUpComponent.setControlsToggleHandler(this._handleControlsChange);
-    this._popUpComponent.setCloseButtonClickHandler(this._handleCloseButtonClick);
+    this._filmCardComponent.setFilmDetailsClickHandler(this._handlerFilmDetailsClick);
+    this._filmCardComponent.setFavoriteClickHandler(this._handlerFavoriteClick);
+    this._filmCardComponent.setWatchedClickHandler(this._handlerWatchedClick);
+    this._filmCardComponent.setWatchListClickHandler(this._handlerWatchListClick);
+
+    this._popUpComponent.setFavoriteClickHandler(this._handlerFavoriteClick);
+    this._popUpComponent.setWatchedClickHandler(this._handlerWatchedClick);
+    this._popUpComponent.setWatchListClickHandler(this._handlerWatchListClick);
+    this._popUpComponent.setCloseClickHandler(this._handlerCloseButtonClick);
 
     if (prevFilmCardComponent === null || prevPopUpComponent === null) {
-      render(this._filmContainer, this._filmCardComponent);
+      render(this._filmContainer, this._filmCardComponent.getElement());
       return;
     }
 
     if (this._mode === Mode.DEFAULT || this._mode === Mode.POPUP) {
-      replace(prevFilmCardComponent, this._filmCardComponent);
+      replace(this._filmCardComponent.getElement(), prevFilmCardComponent.getElement());
     }
 
     if (this._mode === Mode.POPUP) {
-      replace(prevPopUpComponent, this._popUpComponent);
+      replace(this._popUpComponent.getElement(), prevPopUpComponent.getElement());
     }
 
     remove(prevFilmCardComponent);
@@ -65,10 +72,46 @@ export default class FilmCard {
     }
   }
 
+  _handlerFavoriteClick() {
+    this._changeFilm(
+        Object.assign(
+            {},
+            this._film,
+            {
+              isFavorite: !this._film.isFavorite
+            }
+        )
+    );
+  }
+
+  _handlerWatchedClick() {
+    this._changeFilm(
+        Object.assign(
+            {},
+            this._film,
+            {
+              isWatched: !this._film.isWatched
+            }
+        )
+    );
+  }
+
+  _handlerWatchListClick() {
+    this._changeFilm(
+        Object.assign(
+            {},
+            this._film,
+            {
+              isToWatchList: !this._film.isToWatchList
+            }
+        )
+    );
+  }
+
   _openPopUp() {
-    render(this._popUpContainer, this._popUpComponent);
+    render(this._popUpContainer, this._popUpComponent.getElement());
     if (this._isPopUpReOpened) {
-      this._popUpComponent.restoreHandlers();
+      // this._popUpComponent.restoreHandlers();
     }
     document.addEventListener(`keydown`, this._onEscKeyDown);
     this._changeMode();
@@ -77,21 +120,21 @@ export default class FilmCard {
 
   _closePopUp() {
     this._isPopUpReOpened = true;
-    this._popUpComponent.reset(this._film);
+    // this._popUpComponent.reset(this._film);
     remove(this._popUpComponent);
     document.removeEventListener(`keydown`, this._onEscKeyDown);
     this._mode = Mode.DEFAULT;
   }
 
-  _handleControlsChange(film) {
+  _handlerControlsChange(film) {
     this._changeFilm(film);
   }
 
-  _handleFilmDetailsClick() {
+  _handlerFilmDetailsClick() {
     this._openPopUp();
   }
 
-  _handleCloseButtonClick() {
+  _handlerCloseButtonClick() {
     this._closePopUp();
   }
 
