@@ -14,8 +14,12 @@ const headerContainer = document.querySelector(`.header`);
 const footerElement = document.querySelector(`.footer`);
 const footerStatistics = footerElement.querySelector(`.footer__statistics`);
 
+let counter = 0;
 
-const films = new Array(FILMS_COUNT).fill().map(createfilmCard);
+const films = new Array(FILMS_COUNT).fill().map(() => {
+  counter++;
+  return createfilmCard(counter);
+});
 const filters = generateFilter(films);
 
 render(headerContainer, new ProfileView().getElement());

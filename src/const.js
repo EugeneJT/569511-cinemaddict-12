@@ -133,3 +133,16 @@ export const SortType = {
   RATING_DOWN: `rating-down`
 };
 
+export const Mode = {
+  DEFAULT: `DEFAULT`,
+  POPUP: `POPUP`
+};
+
+export const FilmsType = {
+  ALL: `all`,
+  TOP_RATED: `top rated`,
+  MOST_COMMENTED: `most commented`
+};
+
+
+export const EMOJIS = [`angry`, `puke`, `sleeping`, `smile`];
