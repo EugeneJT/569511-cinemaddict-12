@@ -1,8 +1,8 @@
 import SmartView from "./smart.js";
-import {Emoji} from "../const.js";
+import {createCommentsTemplate} from "./comment.js";
 
-const createFilmsPupupTemplate = (filmCard) => {
-  const {poster, age, title, comments, origianlTitle, genres, rating, filmDirector, screenwriters, actors, releaseDate, duration, country, description, isFavorite, isToWatchList, isWatched} = filmCard;
+const createFilmsPupupTemplate = (data) => {
+  const {poster, age, title, comments, origianlTitle, genres, rating, filmDirector, screenwriters, actors, releaseDate, duration, country, description, isFavorite, isToWatchList, isWatched, isEmoji, emojiName} = data;
 
   const popupReleaseDate = releaseDate.toLocaleString(`en-GB`, {year: `numeric`, month: `long`, day: `numeric`});
 
@@ -10,31 +10,7 @@ const createFilmsPupupTemplate = (filmCard) => {
   const isWatchedClass = isWatched ? `checked` : ``;
   const isFavoriteClass = isFavorite ? `checked` : ``;
 
-  const createCommentItems = (items) => {
-    return items.reduce((result, item) => {
-      const {emoji, text, author, day} = item;
-
-      const commentDayFormat = day.toLocaleString(`en-ZA`, {year: `numeric`, month: `numeric`, day: `numeric`, hour: `numeric`, minute: `numeric`});
-
-      result += `<li class="film-details__comment">
-        <span class="film-details__comment-emoji">
-          <img src="./images/emoji/${emoji}" width="55" height="55" alt="emoji-smile">
-        </span>
-        <div>
-          <p class="film-details__comment-text">${text}</p>
-          <p class="film-details__comment-info">
-            <span class="film-details__comment-author">${author}</span>
-            <span class="film-details__comment-day">${commentDayFormat}</span>
-            <button class="film-details__comment-delete">Delete</button>
-          </p>
-          </div>
-      </li>`;
-
-      return result;
-    }, ``);
-  };
-
-  const commentItems = createCommentItems(comments);
+  const commentsMarkup = createCommentsTemplate(comments, isEmoji, emojiName);
 
   return `<section class="film-details">
       <form class="film-details__inner" action="" method="get">
@@ -113,43 +89,7 @@ const createFilmsPupupTemplate = (filmCard) => {
         </div>
 
         <div class="form-details__bottom-container">
-          <section class="film-details__comments-wrap">
-            <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">4</span></h3>
-
-            <ul class="film-details__comments-list">
-              ${commentItems}
-            </ul>
-
-            <div class="film-details__new-comment">
-              <div for="add-emoji" class="film-details__add-emoji-label"></div>
-
-              <label class="film-details__comment-label">
-                <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
-              </label>
-
-              <div class="film-details__emoji-list">
-                <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="smile">
-                <label class="film-details__emoji-label" for="emoji-smile">
-                  <img src="./images/emoji/smile.png" width="30" height="30" alt="emoji">
-                </label>
-
-                <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping">
-                <label class="film-details__emoji-label" for="emoji-sleeping">
-                  <img src="./images/emoji/sleeping.png" width="30" height="30" alt="emoji">
-                </label>
-
-                <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-puke" value="puke">
-                <label class="film-details__emoji-label" for="emoji-puke">
-                  <img src="./images/emoji/puke.png" width="30" height="30" alt="emoji">
-                </label>
-
-                <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="angry">
-                <label class="film-details__emoji-label" for="emoji-angry">
-                  <img src="./images/emoji/angry.png" width="30" height="30" alt="emoji">
-                </label>
-              </div>
-            </div>
-          </section>
+          ${commentsMarkup}
         </div>
       </form>
     </section>`;
@@ -158,7 +98,6 @@ const createFilmsPupupTemplate = (filmCard) => {
 export default class Popup extends SmartView {
   constructor(filmCard) {
     super();
-    this._filmCard = filmCard;
     this._data = Popup.parseFilmToData(filmCard);
 
 
@@ -166,32 +105,21 @@ export default class Popup extends SmartView {
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
     this._watchedClickHandler = this._watchedClickHandler.bind(this);
     this._watchListClickHandler = this._watchListClickHandler.bind(this);
-    this._emotionClickHandler = this._emotionClickHandler.bind(this);
-
+    this._emojiToggleHandler = this._emojiToggleHandler.bind(this);
     this._setInnerHandlers();
   }
 
   getTemplate() {
-    return createFilmsPupupTemplate(this._filmCard);
+    return createFilmsPupupTemplate(this._data);
   }
 
-  _emotionClickHandler(evt) {
-    const emojiBlockElement = evt.currentTarget.closest(`.film-details__new-comment`).querySelector(`.film-details__add-emoji-label`);
-    let img = document.createElement(`img`);
-    img.width = Emoji.WIDTH;
-    img.heigth = Emoji.HEIGHT;
-    img.src = evt.currentTarget.querySelector(`img`).src;
-    emojiBlockElement.innerHTML = ``;
-    emojiBlockElement.append(img);
+  _emojiToggleHandler(evt) {
+    evt.preventDefault();
+    this.updateData({isEmoji: true, emojiName: evt.target.value});
   }
 
   _setInnerHandlers() {
-    const emoji = this.getElement()
-      .querySelectorAll(`.film-details__emoji-label`);
-
-    emoji.forEach((element) => {
-      element.addEventListener(`click`, this._emotionClickHandler);
-    });
+    this.getElement().querySelector(`.film-details__emoji-list`).addEventListener(`change`, this._emojiToggleHandler);
   }
 
   _closeClickHandler(evt) {
@@ -244,7 +172,8 @@ export default class Popup extends SmartView {
   static parseFilmToData(filmCard) {
     return Object.assign(
         {},
-        filmCard
+        filmCard,
+        {isEmoji: false, emojiName: ``}
     );
   }
 

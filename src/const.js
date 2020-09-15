@@ -144,7 +144,5 @@ export const FilmsType = {
   MOST_COMMENTED: `most commented`
 };
 
-export const Emoji = {
-  WIDTH: 55,
-  HEIGHT: 55
-};
+
+export const EMOJIS = [`angry`, `puke`, `sleeping`, `smile`];

@@ -46,7 +46,7 @@ export default class Film extends AbstractView {
   _FilmPopupClickHandler(evt) {
     evt.preventDefault();
     if (evt.target.classList.contains(`film-card__poster`) || evt.target.classList.contains(`film-card__title`) || evt.target.classList.contains(`film-card__comments`)) {
-      this._callback.FilmPopupClick();
+      this._callback.filmPopupClick();
     }
   }
 
@@ -81,7 +81,7 @@ export default class Film extends AbstractView {
   }
 
   setFilmPopupClickHandler(callback) {
-    this._callback.FilmPopupClick = callback;
+    this._callback.filmPopupClick = callback;
     this.getElement().addEventListener(`click`, this._FilmPopupClickHandler);
   }
 }

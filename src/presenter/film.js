@@ -116,7 +116,7 @@ export default class FilmCard {
   }
 
   _closePopUp() {
-    remove(this._popUpComponent);
+    this._popUpContainer.removeChild(this._popUpComponent.getElement());
     document.removeEventListener(`keydown`, this._onEscKeyDown);
     this._mode = Mode.DEFAULT;
   }
