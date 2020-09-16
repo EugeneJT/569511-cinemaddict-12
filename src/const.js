@@ -6,10 +6,8 @@ export const MIN_COMMENTS_COUNT = 0;
 export const MAX_COMMENTS_COUNT = 5;
 
 export const FilmsDuration = {
-  HOUR_MAX: 3,
-  HOUR_MIN: 1,
-  MINUTES_MAX: 59,
-  MINUTES_MIN: 1
+  MINUTES_MAX: 220,
+  MINUTES_MIN: 40
 };
 
 export const COMMENT_EMOJIS = [
@@ -146,3 +144,9 @@ export const FilmsType = {
 
 
 export const EMOJIS = [`angry`, `puke`, `sleeping`, `smile`];
+
+
+export const DateFormats = {
+  YEAR: `YYYY`,
+  DMY: `DD MMMM YYYY`,
+};

@@ -1,7 +1,8 @@
 import AbstractView from "./abstract.js";
+import {formatDurationFilmDate} from "../utils/film-card.js";
 
 const createFilmsCardTemplate = (filmCard) => {
-  const {poster, age, title, rating, duration, description, genre, comments, isFavorite, isToWatchList, isWatched} = filmCard;
+  const {poster, age, title, rating, duration, description, genres, comments, isFavorite, isToWatchList, isWatched} = filmCard;
 
 
   const watchListClass = isToWatchList ? `film-card__controls-item--active` : ``;
@@ -15,8 +16,8 @@ const createFilmsCardTemplate = (filmCard) => {
       <p class="film-card__rating">${rating}</p>
       <p class="film-card__info">
         <span class="film-card__year">${age}</span>
-        <span class="film-card__duration">${duration}</span>
-        <span class="film-card__genre">${genre}</span>
+        <span class="film-card__duration">${formatDurationFilmDate(duration)}</span>
+        <span class="film-card__genre">${genres[0]}</span>
       </p>
       <img src="./images/posters/${poster}" alt="" class="film-card__poster">
       <p class="film-card__description">${description}</p>

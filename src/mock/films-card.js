@@ -1,13 +1,6 @@
 import {getRandomInteger, getRandomFractionInteger, getRandomItem, getRandomItems, getRandomArray} from "../utils/common.js";
 import {FilmsDuration, COMMENT_EMOJIS, COMMENT_USERS, COMMENT_TEXT, FILM_TITLES, FILM_POSTERS, FILM_GENRES, FILM_DIRECTORS, SCREENWRITERS, FILM_DESCRIPTIONS, FILM_ACTORS, FILM_COUNTRIES, AGE_RATING, MIN_FILMS_YEAR, MAX_FILMS_YEAR, MIN_COMMENTS_COUNT, MAX_COMMENTS_COUNT, MIN_RATING_VALUE, MAX_RATING_VALUE} from "../const.js";
 
-const generateFilmDuration = () => {
-  const hours = getRandomInteger(FilmsDuration.HOUR_MIN, FilmsDuration.HOUR_MAX);
-  const minutes = getRandomInteger(FilmsDuration.MINUTES_MIN, FilmsDuration.MINUTES_MAX);
-  const filmDuration = `${hours}h ${minutes}m`;
-
-  return filmDuration;
-};
 
 const generateDate = () => {
   const currentDate = new Date();
@@ -47,7 +40,7 @@ export const createfilmCard = (id) => {
     screenwriters: getRandomItems(SCREENWRITERS),
     actors: getRandomItems(FILM_ACTORS),
     releaseDate: generateDate(),
-    duration: generateFilmDuration(),
+    duration: getRandomInteger(FilmsDuration.MINUTES_MIN, FilmsDuration.MINUTES_MAX),
     country: getRandomItem(FILM_COUNTRIES),
     genres: getRandomArray(FILM_GENRES),
     poster: getRandomItem(FILM_POSTERS),
