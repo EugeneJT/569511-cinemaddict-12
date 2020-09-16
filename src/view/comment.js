@@ -1,10 +1,9 @@
 import {EMOJIS} from "../const.js";
+import {formatCommentDate} from "../utils/film-card.js";
 
 const createCommentItems = (items) => {
   return items.reduce((result, item) => {
     const {emoji, text, author, day} = item;
-
-    const commentDayFormat = day.toLocaleString(`en-ZA`, {year: `numeric`, month: `numeric`, day: `numeric`, hour: `numeric`, minute: `numeric`});
 
     result += `<li class="film-details__comment">
       <span class="film-details__comment-emoji">
@@ -14,7 +13,7 @@ const createCommentItems = (items) => {
         <p class="film-details__comment-text">${text}</p>
         <p class="film-details__comment-info">
           <span class="film-details__comment-author">${author}</span>
-          <span class="film-details__comment-day">${commentDayFormat}</span>
+          <span class="film-details__comment-day">${formatCommentDate(day)}</span>
           <button class="film-details__comment-delete">Delete</button>
         </p>
         </div>

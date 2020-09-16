@@ -1,10 +1,10 @@
 import SmartView from "./smart.js";
 import {createCommentsTemplate} from "./comment.js";
+import {formatDurationFilmDate, formatFilmDate} from "../utils/film-card.js";
+import {DateFormats} from "../const.js";
 
 const createFilmsPupupTemplate = (data) => {
   const {poster, age, title, comments, origianlTitle, genres, rating, filmDirector, screenwriters, actors, releaseDate, duration, country, description, isFavorite, isToWatchList, isWatched, isEmoji, emojiName} = data;
-
-  const popupReleaseDate = releaseDate.toLocaleString(`en-GB`, {year: `numeric`, month: `long`, day: `numeric`});
 
   const watchListClass = isToWatchList ? `checked` : ``;
   const isWatchedClass = isWatched ? `checked` : ``;
@@ -52,11 +52,11 @@ const createFilmsPupupTemplate = (data) => {
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Release Date</td>
-                  <td class="film-details__cell">${popupReleaseDate}</td>
+                  <td class="film-details__cell">${formatFilmDate(releaseDate, DateFormats.DMY)}</td>
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Runtime</td>
-                  <td class="film-details__cell">${duration}</td>
+                  <td class="film-details__cell">${formatDurationFilmDate(duration)}</td>
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Country</td>
