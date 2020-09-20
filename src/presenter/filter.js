@@ -35,7 +35,7 @@ export default class Filter {
       return;
     }
 
-    replace(prevFilterComponent, this._filterComponent);
+    replace(this._filterComponent, prevFilterComponent);
     remove(prevFilterComponent);
   }
 

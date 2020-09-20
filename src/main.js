@@ -38,11 +38,10 @@ const filterModel = new FilterModel();
 const filmsSection = new FilmsSectionView();
 render(siteMainElement, filmsSection.getElement());
 
-
-const moviesPresenter = new MoviesPresenter(filmsSection, moviesModel, commentsModel, filterModel);
 const filterPresenter = new FilterPresenter(siteMainElement, filterModel, moviesModel);
+const moviesPresenter = new MoviesPresenter(filmsSection, moviesModel, commentsModel, filterModel);
 
 render(headerContainer, new ProfileView().getElement());
-moviesPresenter.init();
 filterPresenter.init();
+moviesPresenter.init();
 render(footerStatistics, new StatisticView(films.length).getElement());

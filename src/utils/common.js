@@ -33,20 +33,20 @@ export const getCapitalizedFirstLetter = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
 };
 
-export function sortTopRated(filmsArray) {
-  filmsArray.sort(function (a, b) {
+export function sortTopRated(films) {
+  films.sort(function (a, b) {
     return b.rating - a.rating;
   });
 }
 
 export const sortByDate = (films) => {
   return films.sort((a, b) => {
-    return b.date.getTime() - a.date.getTime();
+    return b.releaseDate.getTime() - a.releaseDate.getTime();
   });
 };
 
-export function sortMostComments(filmsArray) {
-  filmsArray.sort(function (a, b) {
+export function sortMostComments(films) {
+  films.sort(function (a, b) {
     return b.comments.length - a.comments.length;
   });
 }
