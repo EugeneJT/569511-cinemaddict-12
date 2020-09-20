@@ -39,6 +39,12 @@ export function sortTopRated(filmsArray) {
   });
 }
 
+export const sortByDate = (films) => {
+  return films.sort((a, b) => {
+    return b.date.getTime() - a.date.getTime();
+  });
+};
+
 export function sortMostComments(filmsArray) {
   filmsArray.sort(function (a, b) {
     return b.comments.length - a.comments.length;
@@ -57,4 +63,8 @@ export const updateItem = (items, update) => {
     update,
     ...items.slice(index + 1)
   ];
+};
+
+export const generateID = () => {
+  return Date.now() + parseInt(Math.random() * 10000, 10);
 };

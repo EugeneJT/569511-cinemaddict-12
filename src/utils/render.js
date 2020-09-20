@@ -1,11 +1,24 @@
-import Abstract from "../view/abstract.js";
+import AbstractView from "../view/abstract.js";
 
 export const RenderPosition = {
   AFTERBEGIN: `afterbegin`,
-  BEFOREEND: `beforeend`
+  BEFOREEND: `beforeend`,
+  BEFORE: `before`
 };
 
-export const render = (container, element, place = `beforeend`) => {
+export const render = (container, element, place = `beforeend`, targetElement) => {
+  if (container instanceof AbstractView) {
+    container = container.getElement();
+  }
+
+  if (element instanceof AbstractView) {
+    element = element.getElement();
+  }
+
+  if (targetElement instanceof AbstractView) {
+    targetElement = targetElement.getElement();
+  }
+
   switch (place) {
     case RenderPosition.AFTERBEGIN:
       container.prepend(element);
@@ -13,8 +26,11 @@ export const render = (container, element, place = `beforeend`) => {
     case RenderPosition.BEFOREEND:
       container.append(element);
       break;
+    case RenderPosition.BEFORE:
+      container.insertBefore(element, targetElement);
   }
 };
+
 
 export const renderTemplate = (container, template, place = `beforeend`) => {
   container.insertAdjacentHTML(place, template);
@@ -35,11 +51,11 @@ export const createElement = (template) => {
 // а не просто <a>Link 1</a><a>Link 2</a>
 
 export const replace = (newChild, oldChild) => {
-  if (oldChild instanceof Abstract) {
+  if (oldChild instanceof AbstractView) {
     oldChild = oldChild.getElement();
   }
 
-  if (newChild instanceof Abstract) {
+  if (newChild instanceof AbstractView) {
     newChild = newChild.getElement();
   }
 
@@ -53,7 +69,11 @@ export const replace = (newChild, oldChild) => {
 };
 
 export const remove = (component) => {
-  if (!(component instanceof Abstract)) {
+  if (component === null) {
+    return;
+  }
+
+  if (!(component instanceof AbstractView)) {
     throw new Error(`Can remove only components`);
   }
 
