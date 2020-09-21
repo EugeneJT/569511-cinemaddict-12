@@ -3,9 +3,9 @@ const {ALL, WATCHLIST, HISTORY, FAVORITES} = FilterType;
 
 export const filterRules = {
   [ALL]: (film) => film,
-  [WATCHLIST]: (film) => film.isWatchList,
+  [WATCHLIST]: (film) => film.isToWatchList,
   [HISTORY]: (film) => film.isWatched,
-  [FAVORITES]: (film) => film.isFavorites
+  [FAVORITES]: (film) => film.isFavorite
 };
 
 const addFilteredFilmsCount = (filter, rule) => {

@@ -2,7 +2,7 @@ import AbstractView from "./abstract.js";
 import {FilterType} from "../const.js";
 const {ALL, WATCHLIST, HISTORY, FAVORITES} = FilterType;
 
-const createFilterMarkup = (filters, currentFilter) => {
+const createNavigationMarkup = (filters, currentFilter) => {
   const {watchlist, history, favorites} = filters;
   return (
     `<nav class="main-navigation">
@@ -17,7 +17,7 @@ const createFilterMarkup = (filters, currentFilter) => {
   );
 };
 
-export default class Filter extends AbstractView {
+export default class Navigation extends AbstractView {
   constructor(filters, currentFilter) {
     super();
     this._filters = filters;
@@ -27,7 +27,7 @@ export default class Filter extends AbstractView {
   }
 
   getTemplate() {
-    return createFilterMarkup(this._filters, this._currentFilter);
+    return createNavigationMarkup(this._filters, this._currentFilter);
   }
 
 

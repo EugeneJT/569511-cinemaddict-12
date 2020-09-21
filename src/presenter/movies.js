@@ -40,6 +40,8 @@ export default class Movies {
     this._sortComponent = new SortView();
     // this._movieListComponent = new FilmView();
     this._filmsListContainerComponent = new FilmsContainerView();
+    this._filmsTopRatedContainerComponent = new ExtraFilmTemplateView(`Top rated`);
+    this._filmsMostCommentedContainerComponent = new ExtraFilmTemplateView(`Most commented`);
     this._filmsListComponent = new FilmsListView();
     this._noFilmComponent = new NoFilmView();
     this._extraFilmComponent = new ExtraFilmTemplateView();
@@ -202,8 +204,8 @@ export default class Movies {
     }
     const siteMainElement = document.querySelector(`.main`);
 
-    render(this._moviesContainerElement, new ExtraFilmTemplateView(`Top rated`).getElement());
-    render(this._moviesContainerElement, new ExtraFilmTemplateView(`Most commented`).getElement());
+    render(this._moviesContainerElement, this._filmsTopRatedContainerComponent.getElement());
+    render(this._moviesContainerElement, this._filmsMostCommentedContainerComponent.getElement());
 
     const topRateArray = this._getFilms().slice();
     const topComments = this._getFilms().slice();

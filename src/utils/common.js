@@ -33,11 +33,10 @@ export const getCapitalizedFirstLetter = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
 };
 
-export function sortTopRated(films) {
-  films.sort(function (a, b) {
-    return b.rating - a.rating;
-  });
-}
+export const sortTopRated = (films) => {
+  return films.sort((a, b) => b.rating - a.rating);
+};
+
 
 export const sortByDate = (films) => {
   return films.sort((a, b) => {
