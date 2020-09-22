@@ -4,7 +4,6 @@ import FilmsSectionView from "./view/films-section.js";
 import {FILMS_COUNT} from "./const.js";
 import {createfilmCard} from "./mock/films-card.js";
 import {render} from "./utils/render";
-import CommentsModel from "./model/comments.js";
 import MoviesModel from "./model/movies.js";
 import MoviesPresenter from "./presenter/movies.js";
 
@@ -30,8 +29,6 @@ const films = new Array(FILMS_COUNT).fill().map(() => {
 const moviesModel = new MoviesModel();
 moviesModel.setMovies(films);
 
-const commentsModel = new CommentsModel();
-commentsModel.setComments(films);
 const filterModel = new FilterModel();
 
 
@@ -39,7 +36,7 @@ const filmsSection = new FilmsSectionView();
 render(siteMainElement, filmsSection.getElement());
 
 const filterPresenter = new FilterPresenter(siteMainElement, filterModel, moviesModel);
-const moviesPresenter = new MoviesPresenter(filmsSection, moviesModel, commentsModel, filterModel);
+const moviesPresenter = new MoviesPresenter(filmsSection, moviesModel, filterModel);
 
 render(headerContainer, new ProfileView().getElement());
 filterPresenter.init();

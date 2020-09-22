@@ -19,10 +19,9 @@ const {ALL, RATED, COMMENTED} = FilmsType;
 
 
 export default class Movies {
-  constructor(moviesContainer, moviesModel, commentsModel, filterModel) {
+  constructor(moviesContainer, moviesModel, filterModel) {
     this._moviesContainer = moviesContainer;
     this._moviesModel = moviesModel;
-    this._commentsModel = commentsModel;
     this._filterModel = filterModel;
 
     this._moviesContainerElement = this._moviesContainer.getElement();
@@ -82,6 +81,7 @@ export default class Movies {
     Object.values(this._topRatedFilmPresenter).forEach((presenter) => presenter.resetView());
     Object.values(this._mostCommentedFilmPresenter).forEach((presenter) => presenter.resetView());
   }
+
 
   _handlerViewAction(actionType, updateType, updatedData, filmID) {
     switch (actionType) {
@@ -144,19 +144,6 @@ export default class Movies {
 
   }
 
-  // _setActiveSortElement(sortType) {
-  //   const sortComponent = this._sortComponent.getElement();
-  //   const oldSortElement = sortComponent.querySelector(`a[data-sort-type="${this._currentSortType}"]`);
-  //   const newSortElement = sortComponent.querySelector(`a[data-sort-type="${sortType}"]`);
-  //   oldSortElement.classList.remove(`sort__button--active`);
-  //   newSortElement.classList.add(`sort__button--active`);
-  // }
-
-  // _clearFilmList() {
-  //   this._filmsListContainerComponent.getElement().innerHTML = ``;
-  //   this._renderedFilmCount = FILMS_COUNT_PER_STEP;
-  // }
-
   _renderFilmsItem(container, count, elem, type) {
     for (let i = 0; i < count; i++) {
       this._renderFilm(container, elem[i], type);
@@ -164,7 +151,7 @@ export default class Movies {
   }
 
   _renderFilmCard(container, film, type) {
-    const filmPresenter = new FilmCard(container, this._handlerViewAction, this._handlerModeChange, this._commentsModel);
+    const filmPresenter = new FilmCard(container, this._handlerViewAction, this._handlerModeChange);
     filmPresenter.init(film);
     switch (type) {
       case ALL:

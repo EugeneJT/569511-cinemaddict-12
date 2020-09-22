@@ -2,8 +2,6 @@ import FilmView from "../view/films-card.js";
 import PopupView from "../view/films-popup.js";
 import {render, remove, replace} from "../utils/render.js";
 import {KeyCode, Mode, UserAction, UpdateType} from "../const.js";
-// import CommentPresenter from "../presenter/comment.js";
-
 
 const {UPDATE, ADD, DELETE} = UserAction;
 const {PATCH, MINOR} = UpdateType;
@@ -11,15 +9,15 @@ const {PATCH, MINOR} = UpdateType;
 const body = document.querySelector(`body`);
 
 export default class FilmCard {
-  constructor(filmContainer, changeFilm, changeMode, commentsModel) {
+  constructor(filmContainer, changeFilm, changeMode) {
     this._filmContainer = filmContainer;
     this._popupContainer = body;
     this._changeFilm = changeFilm;
     this._changeMode = changeMode;
-    this._commentsModel = commentsModel;
 
     this._filmCardComponent = null;
     this._popUpComponent = null;
+
     this._mode = Mode.DEFAULT;
 
     this._handleModelCommentsUpdate = this._handleModelCommentsUpdate.bind(this);
@@ -29,12 +27,11 @@ export default class FilmCard {
     this._handlerFavoriteClick = this._handlerFavoriteClick.bind(this);
     this._handlerWatchedClick = this._handlerWatchedClick.bind(this);
     this._handlerWatchListClick = this._handlerWatchListClick.bind(this);
-    this._handlerControlsChange = this._handlerControlsChange.bind(this);
-    this._handlerToggleChange = this._handlerToggleChange.bind(this);
     this._handlerCloseButtonClick = this._handlerCloseButtonClick.bind(this);
     this._onEscKeyDown = this._onEscKeyDown.bind(this);
 
-    // this._commentsModel.addObserver(this._handleModelCommentsUpdate);
+    this._deleteClickHandler = this._deleteClickHandler.bind(this);
+    this._addCommentKeyDown = this._addCommentKeyDown.bind(this);
   }
 
   init(film) {
@@ -45,11 +42,6 @@ export default class FilmCard {
 
     const prevFilmCardComponent = this._filmCardComponent;
     const prevPopUpComponent = this._popUpComponent;
-
-    if (prevPopUpComponent) {
-      // this._emoji = prevPopUpComponent.restoreEmoji();
-      // this._newComment = prevPopUpComponent.restoreNewComment();
-    }
 
     this._filmCardComponent = new FilmView(film);
     this._popUpComponent = new PopupView(film, this._emoji, this._newComment, this._handlerPopUpCommentsRender);
@@ -64,8 +56,6 @@ export default class FilmCard {
     this._popUpComponent.setFavoriteClickHandler(this._handlerFavoriteClick);
     this._popUpComponent.setWatchedClickHandler(this._handlerWatchedClick);
     this._popUpComponent.setWatchListClickHandler(this._handlerWatchListClick);
-    // this._filmCardComponent.setControlsClickHandler(this._handlerControlsChange);
-    // this._popUpComponent.setControlsToggleHandler(this._handlerToggleChange);
     this._popUpComponent.setCloseClickHandler(this._handlerCloseButtonClick);
 
     if (prevFilmCardComponent === null || prevPopUpComponent === null) {
@@ -149,7 +139,6 @@ export default class FilmCard {
 
     document.removeEventListener(`keydown`, this._onEscKeyDown);
     this._mode = Mode.DEFAULT;
-    // this._changeFilm(UPDATE, MINOR, this._film);
   }
 
   _handleModelCommentsUpdate(updateType, updatedComment, filmID) {
@@ -202,5 +191,19 @@ export default class FilmCard {
       evt.preventDefault();
       this._closePopUp();
     }
+  }
+
+  _deleteClickHandler(film) {
+    this._changeFilm(
+        UserAction.DELETE,
+        UpdateType.MINOR,
+        film);
+  }
+
+  _addCommentKeyDown(film) {
+    this._changeFilm(
+        UserAction.ADD,
+        UpdateType.MINOR,
+        film);
   }
 }

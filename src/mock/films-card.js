@@ -10,7 +10,7 @@ const generateDate = () => {
   return new Date(currentDate);
 };
 
-const generateComments = () => {
+export const generateComments = () => {
 
   const comments = [];
   const randomCommentsCount = getRandomInteger(MIN_COMMENTS_COUNT, MAX_COMMENTS_COUNT);
