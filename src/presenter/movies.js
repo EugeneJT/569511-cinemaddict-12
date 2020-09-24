@@ -1,6 +1,5 @@
 import ProfileView from "../view/profile.js";
 import SortView from "../view/sort.js";
-// import FilmView from "../view/films-card.js";
 import FilmsListView from "../view/films-list.js";
 import NoFilmView from "../view/no-film.js";
 import FilmsContainerView from "../view/films-container.js";
@@ -37,7 +36,6 @@ export default class Movies {
 
     this._profileComponent = new ProfileView();
     this._sortComponent = new SortView();
-    // this._movieListComponent = new FilmView();
     this._filmsListContainerComponent = new FilmsContainerView();
     this._filmsTopRatedContainerComponent = new ExtraFilmTemplateView(`Top rated`);
     this._filmsMostCommentedContainerComponent = new ExtraFilmTemplateView(`Most commented`);
@@ -89,10 +87,10 @@ export default class Movies {
         this._moviesModel.updateMovie(updateType, updatedData);
         break;
       case ADD:
-        this._commentsModel.addComment(updateType, updatedData, filmID);
+        this._moviesModel.addComment(updateType, updatedData, filmID);
         break;
       case DELETE:
-        this._commentsModel.deleteComment(updateType, updatedData, filmID);
+        this._moviesModel.deleteComment(updateType, updatedData, filmID);
         break;
     }
   }

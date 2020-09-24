@@ -11,10 +11,10 @@ export const FilmsDuration = {
 };
 
 export const COMMENT_EMOJIS = [
-  `smile.png`,
-  `sleeping.png`,
-  `puke.png`,
-  `angry.png`
+  `smile`,
+  `sleeping`,
+  `puke`,
+  `angry`
 ];
 
 export const COMMENT_USERS = [

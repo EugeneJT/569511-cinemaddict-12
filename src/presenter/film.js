@@ -20,8 +20,7 @@ export default class FilmCard {
 
     this._mode = Mode.DEFAULT;
 
-    this._handleModelCommentsUpdate = this._handleModelCommentsUpdate.bind(this);
-    this._handlerPopUpCommentsRender = this._handlerPopUpCommentsRender.bind(this);
+
     this._handlerShortcutKeysDown = this._handlerShortcutKeysDown.bind(this);
     this._handlerFilmPopupClick = this._handlerFilmPopupClick.bind(this);
     this._handlerFavoriteClick = this._handlerFavoriteClick.bind(this);
@@ -30,8 +29,7 @@ export default class FilmCard {
     this._handlerCloseButtonClick = this._handlerCloseButtonClick.bind(this);
     this._onEscKeyDown = this._onEscKeyDown.bind(this);
 
-    this._deleteClickHandler = this._deleteClickHandler.bind(this);
-    this._addCommentKeyDown = this._addCommentKeyDown.bind(this);
+
   }
 
   init(film) {
@@ -141,7 +139,7 @@ export default class FilmCard {
     this._mode = Mode.DEFAULT;
   }
 
-  _handleModelCommentsUpdate(updateType, updatedComment, filmID) {
+  _handlerModelCommentsUpdate(updateType, updatedComment, filmID) {
     if (this._film.id === filmID) {
       switch (updateType) {
         case ADD:
@@ -155,17 +153,12 @@ export default class FilmCard {
     }
   }
 
-  _handlerPopUpCommentsRender(container) {
-    // const comments = this._commentsModel.getComments()[this._film.id];
-    // const commentPresenter = new CommentPresenter(container, this._film.id, this._changeFilm);
-    // comments.forEach((comment) => commentPresenter.init(comment));
+  _handlerPopUpCommentsRender() {
+    // this._changeFilm(DELETE, PATCH, newComment, this._film.id);
   }
 
-  _handlerShortcutKeysDown(container, newComment) {
-    // const newCommentPresenter = new CommentPresenter(container, this._film.id, this._changeFilm);
-    // newCommentPresenter.init(newComment);
-    // this._changeFilm(ADD, ADD, newComment, this._film.id);
-    // this._popUpComponent.reset(this._film);
+  _handlerShortcutKeysDown(newComment) {
+    this._changeFilm(ADD, PATCH, newComment, this._film.id);
   }
 
   _handlerControlsChange(film) {
@@ -193,17 +186,4 @@ export default class FilmCard {
     }
   }
 
-  _deleteClickHandler(film) {
-    this._changeFilm(
-        UserAction.DELETE,
-        UpdateType.MINOR,
-        film);
-  }
-
-  _addCommentKeyDown(film) {
-    this._changeFilm(
-        UserAction.ADD,
-        UpdateType.MINOR,
-        film);
-  }
 }
