@@ -11,10 +11,10 @@ export const FilmsDuration = {
 };
 
 export const COMMENT_EMOJIS = [
-  `smile.png`,
-  `sleeping.png`,
-  `puke.png`,
-  `angry.png`
+  `smile`,
+  `sleeping`,
+  `puke`,
+  `angry`
 ];
 
 export const COMMENT_USERS = [
@@ -149,4 +149,25 @@ export const EMOJIS = [`angry`, `puke`, `sleeping`, `smile`];
 export const DateFormats = {
   YEAR: `YYYY`,
   DMY: `DD MMMM YYYY`,
+};
+
+
+export const UserAction = {
+  UPDATE: `UPDATE_FILM`,
+  ADD: `ADD_COMMENT`,
+  DELETE: `DELETE_COMMENT`
+};
+
+export const UpdateType = {
+  PATCH: `PATCH`,
+  MINOR: `MINOR`,
+  MAJOR: `MAJOR`
+};
+
+
+export const FilterType = {
+  ALL: `allmovies`,
+  WATCHLIST: `watchlist`,
+  HISTORY: `history`,
+  FAVORITES: `favorites`
 };

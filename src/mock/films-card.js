@@ -1,4 +1,4 @@
-import {getRandomInteger, getRandomFractionInteger, getRandomItem, getRandomItems, getRandomArray} from "../utils/common.js";
+import {getRandomInteger, getRandomFractionInteger, getRandomItem, getRandomItems, getRandomArray, generateID} from "../utils/common.js";
 import {FilmsDuration, COMMENT_EMOJIS, COMMENT_USERS, COMMENT_TEXT, FILM_TITLES, FILM_POSTERS, FILM_GENRES, FILM_DIRECTORS, SCREENWRITERS, FILM_DESCRIPTIONS, FILM_ACTORS, FILM_COUNTRIES, AGE_RATING, MIN_FILMS_YEAR, MAX_FILMS_YEAR, MIN_COMMENTS_COUNT, MAX_COMMENTS_COUNT, MIN_RATING_VALUE, MAX_RATING_VALUE} from "../const.js";
 
 
@@ -10,13 +10,14 @@ const generateDate = () => {
   return new Date(currentDate);
 };
 
-const generateComments = () => {
+export const generateComments = () => {
 
   const comments = [];
   const randomCommentsCount = getRandomInteger(MIN_COMMENTS_COUNT, MAX_COMMENTS_COUNT);
 
   for (let i = 0; i < randomCommentsCount; i++) {
     const comment = {
+      id: generateID(),
       emoji: getRandomItem(COMMENT_EMOJIS),
       text: getRandomItem(COMMENT_TEXT),
       author: getRandomItem(COMMENT_USERS),
