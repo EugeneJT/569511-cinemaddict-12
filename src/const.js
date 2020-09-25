@@ -171,3 +171,9 @@ export const FilterType = {
   HISTORY: `history`,
   FAVORITES: `favorites`
 };
+
+export const userGradeSettings = {
+  'Novice': {min: 1, max: 10},
+  'Fan': {min: 11, max: 20},
+  'Movie buff': {min: 21, max: Infinity}
+};

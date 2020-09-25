@@ -29,8 +29,6 @@ export default class FilmCard {
     this._handlerCloseButtonClick = this._handlerCloseButtonClick.bind(this);
     this._onEscKeyDown = this._onEscKeyDown.bind(this);
     this._handleCommentDeleteClick = this._handleCommentDeleteClick.bind(this);
-
-
   }
 
   init(film) {
@@ -105,7 +103,8 @@ export default class FilmCard {
             {},
             this._film,
             {
-              isWatched: !this._film.isWatched
+              isWatched: !this._film.isWatched,
+              watchingDate: new Date()
             }
         )
     );
@@ -206,5 +205,4 @@ export default class FilmCard {
       this._closePopUp();
     }
   }
-
 }

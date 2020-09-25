@@ -1,4 +1,3 @@
-import ProfileView from "../view/profile.js";
 import SortView from "../view/sort.js";
 import FilmsListView from "../view/films-list.js";
 import NoFilmView from "../view/no-film.js";
@@ -7,9 +6,9 @@ import LoadMoreButtonView from "../view/load-more-button.js";
 import ExtraFilmTemplateView from "../view/extra-film.js";
 import {RenderPosition, render, remove} from "../utils/render.js";
 import {sortTopRated, sortMostComments, sortByDate} from "../utils/common.js";
+import {filterRules} from "../utils/filter.js";
 import {FILMS_COUNT_PER_STEP, COUNT_TOP_RATED_FILMS, COUNT_MOST_COMMENTED_FILMS, FilmsType, SortType, UserAction, UpdateType} from "../const.js";
 import FilmCard from "./film.js";
-import {filterRules} from "../utils/filter.js";
 
 
 const {UPDATE, ADD, DELETE} = UserAction;
@@ -31,10 +30,11 @@ export default class Movies {
     this._topRatedFilmPresenter = {};
     this._mostCommentedFilmPresenter = {};
 
+    this.destroyed = false;
+
     this._sortingComponent = null;
     this._loadMoreButtonComponent = null;
 
-    this._profileComponent = new ProfileView();
     this._sortComponent = new SortView();
     this._filmsListContainerComponent = new FilmsContainerView();
     this._filmsTopRatedContainerComponent = new ExtraFilmTemplateView(`Top rated`);
@@ -49,17 +49,22 @@ export default class Movies {
     this._handlerSortTypeChange = this._handlerSortTypeChange.bind(this);
     this._handleShowButtonClick = this._handleShowButtonClick.bind(this);
 
-    this._moviesModel.addObserver(this._handlerModelEvent);
-    this._filterModel.addObserver(this._handlerModelEvent);
   }
 
   init() {
+    this.destroyed = false;
+
+    this._moviesModel.addObserver(this._handlerModelEvent);
+    this._filterModel.addObserver(this._handlerModelEvent);
+
     render(this._moviesContainerElement, this._filmsListComponent);
     this._renderContent();
   }
 
   _getFilms() {
-    const currentFilter = this._filterModel.getFilter();
+    let currentFilter = this._filterModel.getFilter();
+    currentFilter = (currentFilter === `stats`) ? `all` : currentFilter;
+
     const films = this._moviesModel.getMovies();
     const filteredFilms = films.filter((film) => filterRules[currentFilter](film));
 
@@ -72,6 +77,14 @@ export default class Movies {
         return filteredFilms;
     }
 
+  }
+
+  destroy() {
+    this._clearMovieList({resetRenderedFilmCardsCount: true, resetSortType: true});
+
+    this._moviesModel.removeObserver(this._handlerModelEvent);
+    this._filterModel.removeObserver(this._handlerModelEvent);
+    this.destroyed = true;
   }
 
   _handlerModeChange() {
@@ -96,6 +109,10 @@ export default class Movies {
   }
 
   _handlerModelEvent(updateType, updatedFilm) {
+    if (updatedFilm === `stats`) {
+      return;
+    }
+
     switch (updateType) {
       case PATCH:
         if (this._allFilmPresenter[updatedFilm.id]) {

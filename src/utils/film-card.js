@@ -16,3 +16,7 @@ export const formatCommentDate = (date) => {
   return moment(date).fromNow();
 };
 
+export const formatYear = (dateObject) => {
+  return dateObject.getFullYear();
+};
+
