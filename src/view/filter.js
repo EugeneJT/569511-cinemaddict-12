@@ -1,31 +1,50 @@
 import AbstractView from "./abstract.js";
-import {FilterType} from "../const.js";
-const {ALL, WATCHLIST, HISTORY, FAVORITES} = FilterType;
 
-const createNavigationMarkup = (filters, currentFilter) => {
-  const {watchlist, history, favorites} = filters;
-  const activeFilterClassName = (currentFilter === `stats`)
+const createFilterItemTemplate = (filter, currentFilterType) => {
+  const {type, name, count} = filter;
+
+  // Cards amount shows for filters except "all" filter name
+  // Not more than 5 cards
+  const number = (type !== `all`)
+    ? `<span class="main-navigation__item-count">${count}</span>`
+    : ``;
+
+  // Active style for filter
+  const activeFilterClassName = (type === currentFilterType)
+    ? `main-navigation__item--active`
+    : ``;
+
+  return (`
+    <a href="#${type}" data-filter-type="${type}" class="main-navigation__item ${activeFilterClassName}">${name} ${number}</a>
+  `);
+};
+
+const createNavigationMarkup = (filters, currentFilterType) => {
+  // Generate filters
+  // First array element (filter) has active class forever
+  const filterItemsTemplate = filters.map((element) => createFilterItemTemplate(element, currentFilterType)).join(``);
+
+  // Active style for stats
+  const activeFilterClassName = (currentFilterType === `stats`)
     ? `main-navigation__item--active`
     : ``;
 
   return (
     `<nav class="main-navigation">
-    <div class="main-navigation__items">
-      <a href="#all" class="main-navigation__item ${currentFilter === ALL ? ` main-navigation__item--active` : ``}" data-filter-type="${ALL}">All movies</a>
-      <a href="#watchlist" class="main-navigation__item ${currentFilter === WATCHLIST ? ` main-navigation__item--active` : ``}" data-filter-type="${WATCHLIST}">Watchlist <span class="main-navigation__item-count">${watchlist}</span></a>
-      <a href="#history" class="main-navigation__item ${currentFilter === HISTORY ? ` main-navigation__item--active` : ``}" data-filter-type="${HISTORY}">History <span class="main-navigation__item-count">${history}</span></a>
-      <a href="#favorites" class="main-navigation__item ${currentFilter === FAVORITES ? ` main-navigation__item--active` : ``}" data-filter-type="${FAVORITES}">Favorites <span class="main-navigation__item-count">${favorites}</span></a>
-    </div>
-    <a href="#stats" data-filter-type="stats" class="main-navigation__additional ${activeFilterClassName}">Stats</a>
+      <div class="main-navigation__items">
+        ${filterItemsTemplate}
+      </div>
+      <a href="#stats" data-filter-type="stats" class="main-navigation__additional ${activeFilterClassName}">Stats</a>
     </nav>`
   );
 };
 
-export default class Navigation extends AbstractView {
-  constructor(filters, currentFilter) {
+
+export default class Filter extends AbstractView {
+  constructor(filters, currentFilterType) {
     super();
     this._filters = filters;
-    this._currentFilter = currentFilter;
+    this._currentFilter = currentFilterType;
 
     this._filterChangeHandler = this._filterChangeHandler.bind(this);
   }

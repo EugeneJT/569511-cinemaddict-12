@@ -153,7 +153,7 @@ export default class Statistics extends SmartView {
     this._setChecked(this._data.period);
   }
 
-  _getTemplate() {
+  getTemplate() {
     return createStatisticsTemplate(this._data);
   }
 

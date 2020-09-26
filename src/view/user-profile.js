@@ -15,7 +15,7 @@ export default class UserProfile extends AbstractView {
     super();
     this._activeRank = activeRank;
   }
-  _getTemplate() {
+  getTemplate() {
     return createUserProfileTemplate(this._activeRank);
   }
 }
