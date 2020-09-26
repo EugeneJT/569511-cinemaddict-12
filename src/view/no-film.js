@@ -6,7 +6,7 @@ const createNoFilmTemplate = () => {
           </section>`;
 };
 
-export default class FilmsList extends AbstractView {
+export default class NoFilm extends AbstractView {
 
   getTemplate() {
     return createNoFilmTemplate();

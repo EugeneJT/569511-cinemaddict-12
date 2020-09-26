@@ -118,7 +118,7 @@ export default class Popup extends SmartView {
     this._emojiToggleHandler = this._emojiToggleHandler.bind(this);
     this._shortcutKeysDownHandler = this._shortcutKeysDownHandler.bind(this);
     this._commentsInputHandler = this._commentsInputHandler.bind(this);
-    this._deleteClickHandler = this._deleteClickHandler.bind(this);
+    this._commentDeleteHandler = this._commentDeleteHandler.bind(this);
 
 
     this._setInnerHandlers();
@@ -174,10 +174,6 @@ export default class Popup extends SmartView {
   _setInnerHandlers() {
     this.getElement().querySelector(`.film-details__emoji-list`).addEventListener(`change`, this._emojiToggleHandler);
     this.getElement().querySelector(`.film-details__comment-input`).addEventListener(`input`, this._commentsInputHandler);
-    this.getElement().querySelectorAll(`.film-details__comment-delete`).forEach((deleteButton, index) => deleteButton.addEventListener(`click`, (evt) =>{
-      evt.preventDefault();
-      return this._deleteClickHandler(index);
-    }));
   }
 
   setSubmitCommentHandler(callback) {
@@ -231,6 +227,7 @@ export default class Popup extends SmartView {
     this.setWatchedClickHandler(this._callback.watchedClick);
     this.setWatchListClickHandler(this._callback.watchListClick);
     this.setSubmitCommentHandler(this._callback.submitComment);
+    this.setCommentDeleteHandler(this._callback.commentDeleteHandler);
   }
 
   static parseFilmToData(film) {
@@ -246,17 +243,15 @@ export default class Popup extends SmartView {
     return data;
   }
 
-  _deleteClickHandler(index) {
-    this.updateData(
-        Object.assign(
-            {},
-            this._data,
-            {comments: [...this._data.comments.slice(0, index), ...this._data.comments.slice(index + 1)]}));
-    this._callback.deleteClick(this._data);
+  _commentDeleteHandler(evt) {
+    evt.preventDefault();
+    this._callback.commentDeleteHandler(evt.target);
   }
 
-  setDeleteClickHandler(callback) {
-    this._callback.deleteClick = callback;
+  setCommentDeleteHandler(callback) {
+    this._callback.commentDeleteHandler = callback;
+    this.getElement().querySelectorAll(`.film-details__comment-delete`)
+      .forEach((button) => button.addEventListener(`click`, this._commentDeleteHandler));
   }
 
 }

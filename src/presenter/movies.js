@@ -1,4 +1,3 @@
-import ProfileView from "../view/profile.js";
 import SortView from "../view/sort.js";
 import FilmsListView from "../view/films-list.js";
 import NoFilmView from "../view/no-film.js";
@@ -7,9 +6,9 @@ import LoadMoreButtonView from "../view/load-more-button.js";
 import ExtraFilmTemplateView from "../view/extra-film.js";
 import {RenderPosition, render, remove} from "../utils/render.js";
 import {sortTopRated, sortMostComments, sortByDate} from "../utils/common.js";
+import {filter} from "../utils/filter.js";
 import {FILMS_COUNT_PER_STEP, COUNT_TOP_RATED_FILMS, COUNT_MOST_COMMENTED_FILMS, FilmsType, SortType, UserAction, UpdateType} from "../const.js";
 import FilmCard from "./film.js";
-import {filterRules} from "../utils/filter.js";
 
 
 const {UPDATE, ADD, DELETE} = UserAction;
@@ -31,10 +30,11 @@ export default class Movies {
     this._topRatedFilmPresenter = {};
     this._mostCommentedFilmPresenter = {};
 
+    this.destroyed = false;
+
     this._sortingComponent = null;
     this._loadMoreButtonComponent = null;
 
-    this._profileComponent = new ProfileView();
     this._sortComponent = new SortView();
     this._filmsListContainerComponent = new FilmsContainerView();
     this._filmsTopRatedContainerComponent = new ExtraFilmTemplateView(`Top rated`);
@@ -48,20 +48,24 @@ export default class Movies {
     this._handlerModeChange = this._handlerModeChange.bind(this);
     this._handlerSortTypeChange = this._handlerSortTypeChange.bind(this);
     this._handleShowButtonClick = this._handleShowButtonClick.bind(this);
-
-    this._moviesModel.addObserver(this._handlerModelEvent);
-    this._filterModel.addObserver(this._handlerModelEvent);
   }
 
   init() {
+    this.destroyed = false;
+
+    this._moviesModel.addObserver(this._handlerModelEvent);
+    this._filterModel.addObserver(this._handlerModelEvent);
+
     render(this._moviesContainerElement, this._filmsListComponent);
     this._renderContent();
   }
 
   _getFilms() {
-    const currentFilter = this._filterModel.getFilter();
+    let currentFilterType = this._filterModel.getFilter();
+    currentFilterType = (currentFilterType === `stats`) ? `all` : currentFilterType;
+
     const films = this._moviesModel.getMovies();
-    const filteredFilms = films.filter((film) => filterRules[currentFilter](film));
+    const filteredFilms = filter[currentFilterType](films);
 
     switch (this._currentSortType) {
       case SortType.DATE_DOWN:
@@ -72,6 +76,14 @@ export default class Movies {
         return filteredFilms;
     }
 
+  }
+
+  destroy() {
+    this._clearMovieList({resetRenderedFilmsCount: true, resetSortType: true});
+
+    this._moviesModel.removeObserver(this._handlerModelEvent);
+    this._filterModel.removeObserver(this._handlerModelEvent);
+    this.destroyed = true;
   }
 
   _handlerModeChange() {
@@ -96,6 +108,10 @@ export default class Movies {
   }
 
   _handlerModelEvent(updateType, updatedFilm) {
+    if (updatedFilm === `stats`) {
+      return;
+    }
+
     switch (updateType) {
       case PATCH:
         if (this._allFilmPresenter[updatedFilm.id]) {
@@ -134,7 +150,6 @@ export default class Movies {
       return;
     }
 
-    // this._setActiveSortElement(sortType);
     this._currentSortType = sortType;
     this._clearMovieList({resetAllMoviesOnly: true, resetRenderedFilmsCount: true});
     this._renderSorting();
@@ -260,9 +275,6 @@ export default class Movies {
       this._renderedFilmCount = FILMS_COUNT_PER_STEP;
     }
 
-    remove(this._sortingComponent);
-    remove(this._showButtonComponent);
-
     if (resetAllMoviesOnly) {
       return;
     }
@@ -272,6 +284,13 @@ export default class Movies {
 
     this._topRatedFilmPresenter = {};
     this._mostCommentedFilmPresenter = {};
+    remove(this._sortingComponent);
+    remove(this._showButtonComponent);
+    remove(this._filmsTopRatedContainerComponent);
+    remove(this._filmsMostCommentedContainerComponent);
+    remove(this._sortComponent);
+    remove(this._filmsListComponent);
+
 
     if (this._noFilmComponent) {
       remove(this._noFilmComponent);

@@ -28,8 +28,7 @@ export default class FilmCard {
     this._handlerWatchListClick = this._handlerWatchListClick.bind(this);
     this._handlerCloseButtonClick = this._handlerCloseButtonClick.bind(this);
     this._onEscKeyDown = this._onEscKeyDown.bind(this);
-
-
+    this._handleCommentDeleteClick = this._handleCommentDeleteClick.bind(this);
   }
 
   init(film) {
@@ -55,6 +54,8 @@ export default class FilmCard {
     this._popUpComponent.setWatchedClickHandler(this._handlerWatchedClick);
     this._popUpComponent.setWatchListClickHandler(this._handlerWatchListClick);
     this._popUpComponent.setCloseClickHandler(this._handlerCloseButtonClick);
+    this._popUpComponent.setCommentDeleteHandler(this._handleCommentDeleteClick);
+
 
     if (prevFilmCardComponent === null || prevPopUpComponent === null) {
       render(this._filmContainer, this._filmCardComponent);
@@ -102,7 +103,8 @@ export default class FilmCard {
             {},
             this._film,
             {
-              isWatched: !this._film.isWatched
+              isWatched: !this._film.isWatched,
+              watchingDate: new Date()
             }
         )
     );
@@ -157,6 +159,24 @@ export default class FilmCard {
     // this._changeFilm(DELETE, PATCH, newComment, this._film.id);
   }
 
+  _handleCommentDeleteClick(element) {
+    const commentId = element.dataset.commentId;
+    const comments = this._film.comments.slice();
+    comments.splice(comments.findIndex((comment) => String(comment.id) === commentId), 1);
+
+    this._changeFilm(
+        UPDATE,
+        PATCH,
+        Object.assign(
+            {},
+            this._film,
+            {
+              comments,
+            }
+        )
+    );
+  }
+
   _handlerShortcutKeysDown(newComment) {
     this._changeFilm(ADD, PATCH, newComment, this._film.id);
   }
@@ -185,5 +205,4 @@ export default class FilmCard {
       this._closePopUp();
     }
   }
-
 }

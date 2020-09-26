@@ -4,7 +4,7 @@ import {formatCommentDate} from "../utils/film-card.js";
 
 const createCommentItems = (items) => {
   return items.reduce((result, item) => {
-    const {emoji, text, author, day} = item;
+    const {id, emoji, text, author, day} = item;
 
     result += `<li class="film-details__comment">
       <span class="film-details__comment-emoji">
@@ -15,7 +15,7 @@ const createCommentItems = (items) => {
         <p class="film-details__comment-info">
           <span class="film-details__comment-author">${author}</span>
           <span class="film-details__comment-day">${formatCommentDate(day)}</span>
-          <button class="film-details__comment-delete">Delete</button>
+          <button class="film-details__comment-delete" data-comment-id = "${id}">Delete</button>
         </p>
         </div>
     </li>`;
