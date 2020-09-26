@@ -1,5 +1,4 @@
-import {FILMS_COUNT} from "./const.js";
-import {createfilmCard} from "./mock/films-card.js";
+import {UpdateType} from './const.js';
 import {render, remove} from "./utils/render";
 
 import StatisticView from "./view/statistic.js";
@@ -12,9 +11,14 @@ import FilterModel from "./model/filter.js";
 import MoviesPresenter from "./presenter/movies.js";
 import FilterPresenter from "./presenter/filter.js";
 import UserProfilePresenter from './presenter/user-profile.js';
+import Api from './api.js';
+
 
 let statisticComponent;
+const AUTHORIZATION = `Basic qr866jdzbbs`;
+const END_POINT = `https://12.ecmascript.pages.academy/cinemaddict`;
 
+const api = new Api(END_POINT, AUTHORIZATION);
 
 const handleStatisticClick = () => {
   if (statisticComponent) {
@@ -38,24 +42,22 @@ const footerElement = document.querySelector(`.footer`);
 const footerStatistics = footerElement.querySelector(`.footer__statistics`);
 
 
-let counter = 0;
-
-const films = new Array(FILMS_COUNT).fill().map(() => {
-  counter++;
-  return createfilmCard(counter);
-});
-
 const moviesModel = new MoviesModel();
-moviesModel.setMovies(films);
-
 const filterModel = new FilterModel();
 const filmsSection = new FilmsSectionView();
 const userProfilePresenter = new UserProfilePresenter(headerContainer, moviesModel);
 const filterPresenter = new FilterPresenter(siteMainElement, filterModel, moviesModel, handleStatisticClick, handleMenuItemClick);
-const moviesPresenter = new MoviesPresenter(filmsSection, moviesModel, filterModel);
+const moviesPresenter = new MoviesPresenter(filmsSection, moviesModel, filterModel, api);
 
 userProfilePresenter.init();
 render(siteMainElement, filmsSection.getElement());
 filterPresenter.init();
 moviesPresenter.init();
-render(footerStatistics, new StatisticView(films.length).getElement());
+
+api.getMovies()
+  .then((movies) => api.pullComments(movies))
+  .then((films) => {
+    MoviesModel.setMovies(UpdateType.INIT, films);
+    render(footerStatistics, new StatisticView(films.length).getElement());
+    filterPresenter.unlock();
+  });

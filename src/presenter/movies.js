@@ -3,6 +3,7 @@ import FilmsListView from "../view/films-list.js";
 import NoFilmView from "../view/no-film.js";
 import FilmsContainerView from "../view/films-container.js";
 import LoadMoreButtonView from "../view/load-more-button.js";
+import LoadingView from '../view/loading.js';
 import ExtraFilmTemplateView from "../view/extra-film.js";
 import {RenderPosition, render, remove} from "../utils/render.js";
 import {sortTopRated, sortMostComments, sortByDate} from "../utils/common.js";
@@ -17,7 +18,7 @@ const {ALL, RATED, COMMENTED} = FilmsType;
 
 
 export default class Movies {
-  constructor(moviesContainer, moviesModel, filterModel) {
+  constructor(moviesContainer, moviesModel, filterModel, api) {
     this._moviesContainer = moviesContainer;
     this._moviesModel = moviesModel;
     this._filterModel = filterModel;
@@ -29,7 +30,9 @@ export default class Movies {
     this._allFilmPresenter = {};
     this._topRatedFilmPresenter = {};
     this._mostCommentedFilmPresenter = {};
+    this._api = api;
 
+    this._isLoading = true;
     this.destroyed = false;
 
     this._sortingComponent = null;
@@ -42,6 +45,7 @@ export default class Movies {
     this._filmsListComponent = new FilmsListView();
     this._noFilmComponent = new NoFilmView();
     this._extraFilmComponent = new ExtraFilmTemplateView();
+    this._loadingComponent = new LoadingView();
 
     this._handlerViewAction = this._handlerViewAction.bind(this);
     this._handlerModelEvent = this._handlerModelEvent.bind(this);
@@ -62,7 +66,7 @@ export default class Movies {
 
   _getFilms() {
     let currentFilterType = this._filterModel.getFilter();
-    currentFilterType = (currentFilterType === `stats`) ? `all` : currentFilterType;
+    currentFilterType = (currentFilterType === `stats`) ? `allmovies` : currentFilterType;
 
     const films = this._moviesModel.getMovies();
     const filteredFilms = filter[currentFilterType](films);
@@ -76,6 +80,10 @@ export default class Movies {
         return filteredFilms;
     }
 
+  }
+
+  _renderLoading() {
+    render(this._filmsListComponent, this._loadingComponent, RenderPosition.AFTERBEGIN);
   }
 
   destroy() {
@@ -96,7 +104,10 @@ export default class Movies {
   _handlerViewAction(actionType, updateType, updatedData, filmID) {
     switch (actionType) {
       case UPDATE:
-        this._moviesModel.updateMovie(updateType, updatedData);
+        this._api.updateMovie(updatedData)
+          .then((updatedFilm) => {
+            this._moviesModel.updateMovie(updateType, updatedFilm, filmID);
+          });
         break;
       case ADD:
         this._moviesModel.addComment(updateType, updatedData, filmID);
@@ -130,6 +141,11 @@ export default class Movies {
         break;
       case MAJOR:
         this._clearMovieList({resetRenderedFilmsCount: true, resetSortType: true});
+        this._renderContent();
+        break;
+      case UpdateType.INIT:
+        this._isLoading = false;
+        remove(this._loadingComponent);
         this._renderContent();
         break;
     }
@@ -290,6 +306,7 @@ export default class Movies {
     remove(this._filmsMostCommentedContainerComponent);
     remove(this._sortComponent);
     remove(this._filmsListComponent);
+    remove(this._loadingComponent);
 
 
     if (this._noFilmComponent) {
@@ -303,6 +320,11 @@ export default class Movies {
 
   _renderContent() {
     const filmsCount = this._getFilms().length;
+
+    if (this._isLoading) {
+      this._renderLoading();
+      return;
+    }
 
     if (filmsCount <= 0) {
       this._renderNoFilms();

@@ -14,6 +14,7 @@ export default class Filter {
 
     this._currentFilter = null;
     this._filterComponent = null;
+    this._isOpen = false;
 
     this._handleModelEvent = this._handleModelEvent.bind(this);
     this._handleFilterChange = this._handleFilterChange.bind(this);
@@ -31,10 +32,13 @@ export default class Filter {
 
     const prevFilterComponent = this._filterComponent;
     this._filterComponent = new FilterView(filters, this._currentFilter);
-    this._filterComponent.setFilterChangeHandler(this._handleFilterChange);
 
-    this._filterComponent.setStatisticClickHandler(this._handleStatisticClick);
-    this._filterComponent.setMenuItemClickHandler(this._handleMenuItemClick);
+    if (this._isOpen) {
+      this._filterComponent.setFilterChangeHandler(this._handleFilterChange);
+      this._filterComponent.setStatisticClickHandler(this._handleStatisticClick);
+      this._filterComponent.setMenuItemClickHandler(this._handleMenuItemClick);
+    }
+
 
     if (prevFilterComponent === null) {
       render(this._filterContainer, this._filterComponent, AFTERBEGIN);
@@ -45,7 +49,13 @@ export default class Filter {
     remove(prevFilterComponent);
   }
 
+  unlock() {
+    this._isOpen = true;
+    this.init();
+  }
+
   _handleModelEvent() {
+    this._isOpen = true;
     this.init();
   }
 

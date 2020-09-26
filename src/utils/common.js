@@ -64,6 +64,5 @@ export const updateItem = (items, update) => {
   ];
 };
 
-export const generateID = () => {
-  return Date.now() + parseInt(Math.random() * 10000, 10);
-};
+export const generateID = () => Date.now() + parseInt(Math.random() * 10000, 10);
+

@@ -6,7 +6,7 @@ import {getRandomItem, generateID} from "../utils/common.js";
 
 
 const createFilmsPupupTemplate = (data) => {
-  const {poster, age, title, comments, origianlTitle, genres, rating, filmDirector, screenwriters, actors, releaseDate, duration, country, description, isFavorite, isToWatchList, isWatched, emoji, text} = data;
+  const {poster, age, title, comments, originalTitle, genres, rating, filmDirector, screenwriters, actors, releaseDate, duration, country, description, isFavorite, isToWatchList, isWatched, emoji, text} = data;
 
   const watchListClass = isToWatchList ? `checked` : ``;
   const isWatchedClass = isWatched ? `checked` : ``;
@@ -31,7 +31,7 @@ const createFilmsPupupTemplate = (data) => {
               <div class="film-details__info-head">
                 <div class="film-details__title-wrap">
                   <h3 class="film-details__title">${title}</h3>
-                  <p class="film-details__title-original">Original: ${origianlTitle}</p>
+                  <p class="film-details__title-original">Original: ${originalTitle}</p>
                 </div>
 
                 <div class="film-details__rating">

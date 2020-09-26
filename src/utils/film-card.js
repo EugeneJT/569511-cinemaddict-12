@@ -19,4 +19,3 @@ export const formatCommentDate = (date) => {
 export const formatYear = (dateObject) => {
   return dateObject.getFullYear();
 };
-
