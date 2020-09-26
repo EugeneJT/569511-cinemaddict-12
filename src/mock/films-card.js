@@ -70,7 +70,7 @@ export const createfilmCard = (id) => {
   return {
     id,
     title: filmsTitle,
-    origianlTitle: filmsTitle,
+    originalTitle: filmsTitle,
     rating: getRandomFractionInteger(MIN_RATING_VALUE, MAX_RATING_VALUE),
     filmDirector: getRandomItem(FILM_DIRECTORS),
     screenwriters: getRandomItems(SCREENWRITERS),
