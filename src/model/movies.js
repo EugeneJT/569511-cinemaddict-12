@@ -1,55 +1,66 @@
-import Observer from "../utils/observer.js";
+import Observer from '../utils/observer.js';
 
 export default class Movies extends Observer {
   constructor() {
     super();
-    this._films = [];
+
+    this._movies = [];
   }
 
-  setMovies(updateType, films) {
-    this._films = films.slice();
+  setMovies(updateType, movies) {
+    this._movies = movies;
     this._notify(updateType);
   }
 
   getMovies() {
-    return this._films.slice();
+    return this._movies;
   }
 
-  updateMovie(updateType, updatedFilm) {
-    const index = this._films.findIndex((film) => film.id === updatedFilm.id);
+  updateFilms(updateType, update) {
+    const index = this._movies.findIndex((film) => film.id === update.id);
 
     if (index === -1) {
       throw new Error(`Can't update unexisting film`);
     }
 
-    this._films = [...this._films.slice(0, index), updatedFilm, ...this._films.slice(index + 1)];
-    this._notify(updateType, updatedFilm);
+    this._movies = [
+      ...this._movies.slice(0, index),
+      update,
+      ...this._movies.slice(index + 1)
+    ];
+
+    this._notify(updateType, update);
   }
 
-  addComment(updateType, comment, filmID) {
+  addComment(updateType, update) {
+    const index = this._movies.findIndex((film) => film.id === update.id);
 
-    const updatedFilm = this._films.find((film) => film.id === filmID);
-
-    if (updatedFilm === -1) {
+    if (index === -1) {
       throw new Error(`Can't update unexisting film`);
     }
 
-    updatedFilm.comments.push(comment);
+    this._movies = [
+      ...this._movies.slice(0, index),
+      update,
+      ...this._movies.slice(index + 1)
+    ];
 
-    this._notify(updateType, updatedFilm);
+    this._notify(updateType, update);
   }
 
-  deleteComment(updateType, deletedComment, filmID) {
-
-    const updatedFilm = this._films.find((film) => film.id === filmID);
-
-    if (updatedFilm === -1) {
+  deleteComment(updateType, update) {
+    const index = this._movies.findIndex((film) => film.id === update.id);
+    if (index === -1) {
       throw new Error(`Can't update unexisting film`);
     }
 
-    updatedFilm.comments = updatedFilm.comments.filter((comment) => comment.id !== deletedComment.id).slice();
+    this._movies = [
+      ...this._movies.slice(0, index),
+      update,
+      ...this._movies.slice(index + 1)
+    ];
 
-    this._notify(updateType, updatedFilm);
+    this._notify(updateType, update);
   }
 
   static adaptToClient(film) {
@@ -98,7 +109,7 @@ export default class Movies extends Observer {
           {
             text: commentObject.comment,
             emoji: commentObject.emotion,
-            date:
+            day:
               (commentObject.date)
                 ? new Date(commentObject.date)
                 : commentObject.date
@@ -112,27 +123,11 @@ export default class Movies extends Observer {
     });
   }
 
-  static adaptFilmToServer(film) {
-    const comments =
-      (film.comments.length >= 1)
-        ? film.comments.map((obj) => obj.id)
-        : film.comments;
-
-    const releaseDate =
-    (film.release)
-      ? new Date(film.release)
-      : film.release;
-
-    const watchingDate =
-    (film.watchingDate)
-      ? new Date(film.watchingDate)
-      : film.watchingDate;
-
-    return Object.assign(
-        {},
-        {
-          "id": film.id,
-          comments,
+  static adaptToServer(film) {
+    const commentsId = film.comments.map((comment) => comment.id);
+    const adaptedFilm = Object.assign({},
+        film, {
+          "comments": commentsId,
           "film_info": {
             "title": film.title,
             "alternative_title": film.originalTitle,
@@ -143,7 +138,7 @@ export default class Movies extends Observer {
             "writers": film.screenwriters,
             "actors": film.actors,
             "release": {
-              "date": releaseDate,
+              "date": film.releaseDate,
               "release_country": film.country
             },
             "runtime": film.duration,
@@ -153,9 +148,33 @@ export default class Movies extends Observer {
           "user_details": {
             "watchlist": film.isToWatchList,
             "already_watched": film.isWatched,
-            "watching_date": watchingDate,
+            "watching_date": film.watchingDate,
             "favorite": film.isFavorite,
           }
-        });
+        }
+    );
+    return adaptedFilm;
+  }
+
+  static adaptCommentsToClient(comment) {
+    const adaptedComment = Object.assign({}, comment, {
+      name: comment.author,
+      text: comment.comment,
+      date: new Date(comment.date),
+      emoji: comment.emotion
+    });
+
+    return adaptedComment;
+  }
+
+  static adaptCommentToServer(comment) {
+    const adaptedComment = Object.assign({}, comment, {
+      author: comment.name,
+      comment: comment.text,
+      date: comment.date.toISOString(),
+      emotion: comment.emoji,
+    });
+
+    return adaptedComment;
   }
 }

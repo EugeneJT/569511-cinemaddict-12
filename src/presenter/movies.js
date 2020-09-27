@@ -102,15 +102,28 @@ export default class Movies {
 
 
   _handlerViewAction(actionType, updateType, updatedData, filmID) {
+    let film = null;
     switch (actionType) {
       case UPDATE:
-        this._api.updateMovie(updatedData)
-          .then((updatedFilm) => {
-            this._moviesModel.updateMovie(updateType, updatedFilm, filmID);
-          });
+        this._api.updateFilm(updatedData).then((movie) => {
+          film = movie;
+          return this._api.getComments(movie.id);
+        })
+        .then((comments) => {
+          film.comments = comments;
+          this._moviesModel.updateFilms(updateType, film);
+        });
         break;
       case ADD:
-        this._moviesModel.addComment(updateType, updatedData, filmID);
+        const commentsPromise = this._api.addComment(updatedData, updatedData.comments).then((comments) => {
+          this._moviesModel.addComment(updateType, film);
+          for (let presenter of this._filmPresenter.keys()) {
+            if (presenter[0] === film.id) {
+              this._filmPresenter.get(presenter).init(film);
+            }
+          }
+          return Promise.resolve(comments);
+        });
         break;
       case DELETE:
         this._moviesModel.deleteComment(updateType, updatedData, filmID);
