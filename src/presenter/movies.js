@@ -9,7 +9,7 @@ import {RenderPosition, render, remove} from "../utils/render.js";
 import {sortTopRated, sortMostComments, sortByDate} from "../utils/common.js";
 import {filter} from "../utils/filter.js";
 import {FILMS_COUNT_PER_STEP, COUNT_TOP_RATED_FILMS, COUNT_MOST_COMMENTED_FILMS, FilmsType, SortType, UserAction, UpdateType} from "../const.js";
-import FilmCard from "./film.js";
+import FilmCard, {State as FilmPresenterStates} from "./film.js";
 
 
 const {UPDATE, ADD, DELETE} = UserAction;
@@ -101,21 +101,69 @@ export default class Movies {
   }
 
 
-  _handlerViewAction(actionType, updateType, updatedData, filmID) {
+  _handlerViewAction(actionType, updateType, update, targetComment) {
+    let film = null;
     switch (actionType) {
       case UPDATE:
-        this._api.updateMovie(updatedData)
-          .then((updatedFilm) => {
-            this._moviesModel.updateMovie(updateType, updatedFilm, filmID);
-          });
+        this._api.updateFilm(update).then((movie) => {
+          film = movie;
+          return this._api.getComments(movie.id);
+        })
+        .then((comments) => {
+          film.comments = comments;
+          this._moviesModel.updateFilms(updateType, film);
+        });
         break;
       case ADD:
-        this._moviesModel.addComment(updateType, updatedData, filmID);
-        break;
+        film = update;
+        for (let presenter of this._allFilmPresenter.keys()) {
+          if (presenter[0] === film.id) {
+            this._allFilmPresenter.get(presenter).setViewState(FilmPresenterStates.SAVING);
+          }
+        }
+        const commentsPromise = this._api.addComment(update, update.comments).then((comments) => {
+          this._moviesModel.addComment(updateType, film);
+          for (let presenter of this._allFilmPresenter.keys()) {
+            if (presenter[0] === film.id) {
+              this._allFilmPresenter.get(presenter).init(film);
+            }
+          }
+          return Promise.resolve(comments);
+        })
+        .catch(()=>{
+          for (let presenter of this._allFilmPresenter.keys()) {
+            if (presenter[0] === film.id) {
+              this._allFilmPresenter.get(presenter).setViewState(FilmPresenterStates.ABORTING);
+            }
+          }
+        });
+        return commentsPromise;
       case DELETE:
-        this._moviesModel.deleteComment(updateType, updatedData, filmID);
-        break;
+        film = update;
+        for (let presenter of this._allFilmPresenter.keys()) {
+          if (presenter[0] === film.id) {
+            this._allFilmPresenter.get(presenter).setViewState(FilmPresenterStates.DELETING, targetComment);
+          }
+        }
+        const promiseOfDeleting = this._api.deleteComment(targetComment).then(() => {
+          this._moviesModel.deleteComment(updateType, update);
+          for (let presenter of this._allFilmPresenter.keys()) {
+            if (presenter[0] === film.id) {
+              this._allFilmPresenter.get(presenter).init(film);
+            }
+          }
+          return Promise.resolve();
+        })
+        .catch(()=>{
+          for (let presenter of this._allFilmPresenter.keys()) {
+            if (presenter[0] === film.id) {
+              this._allFilmPresenter.get(presenter).setViewState(FilmPresenterStates.ABORTING);
+            }
+          }
+        });
+        return promiseOfDeleting;
     }
+    return null;
   }
 
   _handlerModelEvent(updateType, updatedFilm) {

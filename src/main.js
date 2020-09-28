@@ -54,10 +54,19 @@ render(siteMainElement, filmsSection.getElement());
 filterPresenter.init();
 moviesPresenter.init();
 
-api.getMovies()
-  .then((movies) => api.pullComments(movies))
-  .then((films) => {
-    MoviesModel.setMovies(UpdateType.INIT, films);
-    render(footerStatistics, new StatisticView(films.length).getElement());
-    filterPresenter.unlock();
+
+let films = null;
+api.getMovies().then((movies) => {
+  films = movies;
+  return Promise.all(movies.map((movie)=>api.getComments(movie.id)));
+}).then((comments) => {
+  films.forEach((film, index) => {
+    film.comments = comments[index];
   });
+  moviesModel.setMovies(UpdateType.INIT, films);
+  userProfilePresenter.init();
+  render(footerStatistics, new StatisticView(films.length).getElement());
+})
+.catch(() => {
+  moviesModel.setMovies(UpdateType.INIT, []);
+});

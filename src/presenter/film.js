@@ -8,6 +8,12 @@ const {PATCH, MINOR} = UpdateType;
 
 const body = document.querySelector(`body`);
 
+export const State = {
+  SAVING: `SAVING`,
+  DELETING: `DELETING`,
+  ABORTING: `ABORTING`
+};
+
 export default class FilmCard {
   constructor(filmContainer, changeFilm, changeMode) {
     this._filmContainer = filmContainer;
@@ -203,6 +209,37 @@ export default class FilmCard {
     if (isEscKey) {
       evt.preventDefault();
       this._closePopUp();
+    }
+  }
+
+  setViewState(state, commentId) {
+    const resetFormState = () => {
+      this._popUpComponent.updateData({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false
+      });
+    };
+
+    switch (state) {
+      case State.SAVING:
+        this._popUpComponent.updateData({
+          isDisabled: true,
+          isSaving: true
+        }, true);
+        break;
+      case State.DELETING:
+        this._popUpComponent.setDeletingCommentId(commentId);
+        this._popUpComponent.updateData({
+          isDisabled: true,
+          isDeleting: true
+        });
+        break;
+      case State.ABORTING:
+        if (this._mode === Mode.OPENED) {
+          this._popUpComponent.shake(resetFormState);
+        }
+        break;
     }
   }
 }
