@@ -1,3 +1,9 @@
+const HIGHEST_USER_RANK = 21;
+const LOW_USER_RANK = 10;
+const LOWEST_USER_RANK = 0;
+const HIGHEST_USER_NAME = `movie buff`;
+const MEDIUM_USER_NAME = `fan`;
+const LOW_USER_NAME = `novice`;
 
 export const getRandomInteger = (a = 0, b = 1) => {
   const lower = Math.ceil(Math.min(a, b));
@@ -6,63 +12,15 @@ export const getRandomInteger = (a = 0, b = 1) => {
   return Math.floor(lower + Math.random() * (upper - lower + 1));
 };
 
-export const getRandomFractionInteger = (a = 0, b = 1) => {
-  const randomInteger = Math.random() * (b - a) + a;
-  const randomFractionInteger = Math.floor(randomInteger * 10) / 10;
 
-  return randomFractionInteger;
-};
-
-export const getRandomItem = (array) => {
-  return array[getRandomInteger(0, array.length - 1)];
-};
-
-export const getRandomBoolean = () => {
-  return Math.random() > 0.5;
-};
-
-export const getRandomArray = (array) => {
-  return array.filter(getRandomBoolean);
-};
-
-export const getRandomItems = (array) => {
-  return getRandomArray(array).join();
-};
-
-export const getCapitalizedFirstLetter = (string) => {
-  return string.charAt(0).toUpperCase() + string.slice(1);
-};
-
-export const sortTopRated = (films) => {
-  return films.sort((a, b) => b.rating - a.rating);
-};
-
-
-export const sortByDate = (films) => {
-  return films.sort((a, b) => {
-    return b.releaseDate.getTime() - a.releaseDate.getTime();
-  });
-};
-
-export function sortMostComments(films) {
-  films.sort(function (a, b) {
-    return b.comments.length - a.comments.length;
-  });
-}
-
-export const updateItem = (items, update) => {
-  const index = items.findIndex((item) => item.id === update.id);
-
-  if (index === -1) {
-    return items;
+export const getUserRank = (quantityOfWatched) => {
+  if (quantityOfWatched >= HIGHEST_USER_RANK) {
+    return HIGHEST_USER_NAME;
+  } else if (quantityOfWatched < HIGHEST_USER_RANK && quantityOfWatched > LOW_USER_RANK) {
+    return MEDIUM_USER_NAME;
+  } else if (quantityOfWatched > LOWEST_USER_RANK && quantityOfWatched <= LOW_USER_RANK) {
+    return LOW_USER_NAME;
+  } else {
+    return ``;
   }
-
-  return [
-    ...items.slice(0, index),
-    update,
-    ...items.slice(index + 1)
-  ];
 };
-
-export const generateID = () => Date.now() + parseInt(Math.random() * 10000, 10);
-

@@ -1,161 +1,17 @@
-export const MIN_RATING_VALUE = 0;
-export const MAX_RATING_VALUE = 10;
-export const MIN_FILMS_YEAR = 1990;
-export const MAX_FILMS_YEAR = 2020;
-export const MIN_COMMENTS_COUNT = 0;
-export const MAX_COMMENTS_COUNT = 5;
-
-export const FilmsDuration = {
-  MINUTES_MAX: 220,
-  MINUTES_MIN: 40
-};
-
-export const COMMENT_EMOJIS = [
-  `smile`,
-  `sleeping`,
-  `puke`,
-  `angry`
-];
-
-export const COMMENT_USERS = [
-  `John Dorian`,
-  `Christopher Turk`,
-  `Elliot Reid`,
-  `Dr. Cox`,
-  `Bob Kelso`,
-  `Janitor`
-];
-
-export const COMMENT_TEXT = [
-  `Interesting setting and a good cast`,
-  `Booooooooooring`,
-  `Very very old. Meh`,
-  `Almost two hours? Seriously?`
-];
-
-export const FILM_TITLES = [
-  `Made for Each Other`,
-  `Popeye Meets Sinbad`,
-  `Sagebrush Trail`,
-  `Santa-Claus conquers the Martians`,
-  `The Dance of Life`,
-  `The Great Flamarion`,
-  `The Man With The Golden Arm`
-];
-
-export const FILM_POSTERS = [
-  `made-for-each-other.png`,
-  `popeye-meets-sinbad.png`,
-  `sagebrush-trail.jpg`,
-  `santa-claus-conquers-the-martians.jpg`,
-  `the-dance-of-life.jpg`,
-  `the-great-flamarion.jpg`,
-  `the-man-with-the-golden-arm.jpg`
-];
-
-export const FILM_GENRES = [
-  `Action Movie`,
-  `Comedy`,
-  `Science Fiction`,
-  `Documentary`,
-  `Drama`,
-  `Horror Movie`,
-  `Adventure Film`
-];
-
-export const FILM_DIRECTORS = [
-  `David Lynch`,
-  `Martin Scorsese`,
-  `Quentin Tarantino`,
-  `Lars von Trier`,
-  `Steven Spielberg`
-];
-
-export const SCREENWRITERS = [
-  `Francis Ford Coppola`,
-  `William Goldman`,
-  `Charlie Kaufman`,
-  `Woody Allen`,
-  `Nora Ephron`
-];
-
-export const FILM_DESCRIPTIONS = [
-  `Lorem ipsum dolor sit amet, consectetur adipiscing elit.`,
-  `Cras aliquet varius magna, non porta ligula feugiat eget.`,
-  `Fusce tristique felis at fermentum pharetra. Aliquam id orci ut lectus varius viverra.`,
-  `Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum.`,
-  `Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. Sed sed nisi sed augue convallis suscipit in sed felis.`,
-  `Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.`
-];
-
-export const FILM_ACTORS = [
-  `Robert De Niro`,
-  `Leonardo DiCaprio`,
-  `Morgan Freeman`,
-  `Tom Hanks`,
-  `Anthony Hopkins`,
-  `Samuel L. Jackson`,
-  `Meryl Streep`
-];
-
-export const FILM_COUNTRIES = [
-  `USA`,
-  `UK`,
-  `Russia`,
-  `Australia`,
-  `India`,
-  `South Korea`
-];
-
-export const AGE_RATING = [
-  `0+`,
-  `6+`,
-  `16+`,
-  `18+`
-];
-
-export const FILMS_COUNT = 12;
+export const FilmsType = [`Top rated`, `Most commented`];
+export const ESC_CODE = `Escape`;
+export const ENTER_CODE = `Enter`;
+export const ACTIVECLASS = `main-navigation__item--active`;
+export const AUTHORIZATION = `Basic qr866jdzbbs`;
+export const END_POINT = `https://12.ecmascript.pages.academy/cinemaddict`;
 export const FILMS_COUNT_PER_STEP = 5;
-
-export const COUNT_TOP_RATED_FILMS = 2;
-export const COUNT_MOST_COMMENTED_FILMS = 2;
-
-export const KeyCode = {
-  ESCAPE: `Escape`,
-  ESC: `Esc`
-};
+export const COUNT_EXTRA_FILMS = 2;
+export const SHAKE_ANIMATION_TIMEOUT = 600;
 
 export const SortType = {
   DEFAULT: `default`,
-  DATE_DOWN: `date-down`,
-  RATING_DOWN: `rating-down`
-};
-
-export const Mode = {
-  DEFAULT: `DEFAULT`,
-  POPUP: `POPUP`
-};
-
-export const FilmsType = {
-  ALL: `all`,
-  TOP_RATED: `top rated`,
-  MOST_COMMENTED: `most commented`
-};
-
-
-export const EMOJIS = [`angry`, `puke`, `sleeping`, `smile`];
-
-
-export const DateFormats = {
-  YEAR: `YYYY`,
-  DMY: `DD MMMM YYYY`,
-};
-
-
-export const UserAction = {
-  UPDATE: `UPDATE_FILM`,
-  ADD: `ADD_COMMENT`,
-  DELETE: `DELETE_COMMENT`
+  DATE: `date`,
+  RATING: `rating`
 };
 
 export const UpdateType = {
@@ -165,16 +21,41 @@ export const UpdateType = {
   INIT: `INIT`
 };
 
-
 export const FilterType = {
-  ALL: `allmovies`,
+  ALL: `all`,
   WATCHLIST: `watchlist`,
   HISTORY: `history`,
-  FAVORITES: `favorites`
+  FAVORITES: `favorites`,
+  STATS: `stats`
 };
 
-export const userGradeSettings = {
-  'Novice': {min: 1, max: 10},
-  'Fan': {min: 11, max: 20},
-  'Movie buff': {min: 21, max: Infinity}
+export const MenuItem = {
+  FILTER: `filter`,
+  STATISTICS: `statistics`
+};
+
+export const Mode = {
+  DEFAULT: `DEFAULT`,
+  OPENED: `OPENED`
+};
+
+export const emojiMap = {
+  smile: `./images/emoji/smile.png`,
+  puke: `./images/emoji/puke.png`,
+  sleeping: `./images/emoji/sleeping.png`,
+  angry: `./images/emoji/angry.png`,
+};
+
+export const UserAction = {
+  UPDATE_FILM: `UPDATE_FILM`,
+  ADD_COMMENT: `ADD_COMMENT`,
+  DELETE_COMMENT: `DELETE_COMMENT`
+};
+
+export const StatisticsCasesMap = {
+  ALLTIME: `statistic-all-time`,
+  TODAY: `statistic-today`,
+  WEEK: `statistic-week`,
+  MOUNTH: `statistic-month`,
+  YEAR: `statistic-year`,
 };

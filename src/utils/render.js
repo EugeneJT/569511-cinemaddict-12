@@ -1,54 +1,49 @@
-import AbstractView from "../view/abstract.js";
+import AbstractView from '../view/abstract.js';
 
 export const RenderPosition = {
   AFTERBEGIN: `afterbegin`,
   BEFOREEND: `beforeend`,
-  BEFORE: `before`
 };
 
-export const render = (container, element, place = `beforeend`, targetElement) => {
+export const render = (container, child, place = `beforeend`) => {
   if (container instanceof AbstractView) {
     container = container.getElement();
   }
 
-  if (element instanceof AbstractView) {
-    element = element.getElement();
-  }
-
-  if (targetElement instanceof AbstractView) {
-    targetElement = targetElement.getElement();
+  if (child instanceof AbstractView) {
+    child = child.getElement();
   }
 
   switch (place) {
     case RenderPosition.AFTERBEGIN:
-      container.prepend(element);
+      container.prepend(child);
       break;
     case RenderPosition.BEFOREEND:
-      container.append(element);
+      container.append(child);
       break;
-    case RenderPosition.BEFORE:
-      container.insertBefore(element, targetElement);
   }
 };
 
-
-export const renderTemplate = (container, template, place = `beforeend`) => {
-  container.insertAdjacentHTML(place, template);
-};
-
-// Принцип работы прост:
-// 1. создаём пустой div-блок
-// 2. берём HTML в виде строки и вкладываем в этот div-блок, превращая в DOM-элемент
-// 3. возвращаем этот DOM-элемент
 export const createElement = (template) => {
-  const newElement = document.createElement(`div`); // 1
-  newElement.innerHTML = template; // 2
+  const newElement = document.createElement(`div`);
+  newElement.innerHTML = template;
 
-  return newElement.firstChild; // 3
+  return newElement.firstChild;
 };
-// Единственный нюанс, что HTML в строке должен иметь общую обёртку,
-// то есть быть чем-то вроде <nav><a>Link 1</a><a>Link 2</a></nav>,
-// а не просто <a>Link 1</a><a>Link 2</a>
+
+export const remove = (component) => {
+
+  if (component === null) {
+    return;
+  }
+
+  if (!(component instanceof AbstractView)) {
+    throw new Error(`Can remove only components`);
+  }
+
+  component.getElement().remove();
+  component.removeElement();
+};
 
 export const replace = (newChild, oldChild) => {
   if (oldChild instanceof AbstractView) {
@@ -66,17 +61,4 @@ export const replace = (newChild, oldChild) => {
   }
 
   parent.replaceChild(newChild, oldChild);
-};
-
-export const remove = (component) => {
-  if (component === null) {
-    return;
-  }
-
-  if (!(component instanceof AbstractView)) {
-    throw new Error(`Can remove only components`);
-  }
-
-  component.getElement().remove();
-  component.removeElement();
 };
