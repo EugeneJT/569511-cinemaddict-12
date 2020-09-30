@@ -7,6 +7,8 @@ export const END_POINT = `https://12.ecmascript.pages.academy/cinemaddict`;
 export const FILMS_COUNT_PER_STEP = 5;
 export const COUNT_EXTRA_FILMS = 2;
 export const SHAKE_ANIMATION_TIMEOUT = 600;
+export const MAX_DESCRIPTION_LENGTH = 140;
+export const CURRENT_DESCRIPTION_LENGTH = 139;
 
 export const SortType = {
   DEFAULT: `default`,

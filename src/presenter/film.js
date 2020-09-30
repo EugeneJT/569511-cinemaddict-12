@@ -199,35 +199,4 @@ export default class Film {
         break;
     }
   }
-
-  setViewState(state, comment) {
-    const resetFormState = () => {
-      this._filmPopupComponent.updateData({
-        isDisabled: false,
-        isSaving: false,
-        isDeleting: false
-      });
-    };
-
-    switch (state) {
-      case State.SAVING:
-        this._filmPopupComponent.updateData({
-          isDisabled: true,
-          isSaving: true
-        }, true);
-        break;
-      case State.DELETING:
-        this._filmPopupComponent.setDeletingComment(comment);
-        this._filmPopupComponent.updateData({
-          isDisabled: true,
-          isDeleting: true
-        });
-        break;
-      case State.ABORTING:
-        if (this._mode === Mode.OPENED) {
-          this._filmPopupComponent.setShakeAnimation(resetFormState);
-        }
-        break;
-    }
-  }
 }
