@@ -199,4 +199,35 @@ export default class Film {
         break;
     }
   }
+
+  setViewState(state, commentId) {
+    const resetFormState = () => {
+      this._popUpComponent.updateData({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false
+      });
+    };
+
+    switch (state) {
+      case State.SAVING:
+        this._popUpComponent.updateData({
+          isDisabled: true,
+          isSaving: true
+        }, true);
+        break;
+      case State.DELETING:
+        this._popUpComponent.setDeletingCommentId(commentId);
+        this._popUpComponent.updateData({
+          isDisabled: true,
+          isDeleting: true
+        });
+        break;
+      case State.ABORTING:
+        if (this._mode === Mode.OPENED) {
+          this._popUpComponent.shake(resetFormState);
+        }
+        break;
+    }
+  }
 }
