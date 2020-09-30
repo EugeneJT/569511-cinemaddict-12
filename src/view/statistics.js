@@ -82,14 +82,17 @@ const renderCharts = (films, statisticCtx) => {
 };
 
 const getTheMostFrequentGenre = (films) => {
-  let genresObject = getGenresFrequencies(films);
+
+  const genresObject = getGenresFrequencies(films);
+
   const maxValue = Math.max.apply(null, Object.values(genresObject));
+
   return Object.keys(genresObject).filter((genre) => genresObject[genre] === maxValue);
 };
 
 const createStatistic = (activeRank, films, dateCase) => {
   const watchedFilms = [...films].filter((movie)=>movie.isWatched);
-  let initialValue = 0;
+  const initialValue = 0;
   const totalTimeWatched = watchedFilms.reduce((accumulator, currentMovie) => accumulator + currentMovie.filmDuration, initialValue);
 
   return (

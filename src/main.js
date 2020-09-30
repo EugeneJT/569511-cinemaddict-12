@@ -4,7 +4,7 @@ import MoviesPresenter from './presenter/movies.js';
 import MovieModel from './model/movies.js';
 import FilterModel from './model/filter.js';
 import FilterPresenter from "./presenter/filter.js";
-import StatisticView from './view/statistic.js';
+import StatisticView from './view/statistics.js';
 import Api from './api.js';
 import {render} from './utils/render.js';
 import {MenuItem, UpdateType, AUTHORIZATION, END_POINT} from './const.js';
