@@ -200,9 +200,9 @@ export default class Film {
     }
   }
 
-  setViewState(state, commentId) {
+  setViewState(state, comment) {
     const resetFormState = () => {
-      this._popUpComponent.updateData({
+      this._filmPopupComponent.updateData({
         isDisabled: false,
         isSaving: false,
         isDeleting: false
@@ -211,21 +211,21 @@ export default class Film {
 
     switch (state) {
       case State.SAVING:
-        this._popUpComponent.updateData({
+        this._filmPopupComponent.updateData({
           isDisabled: true,
           isSaving: true
         }, true);
         break;
       case State.DELETING:
-        this._popUpComponent.setDeletingCommentId(commentId);
-        this._popUpComponent.updateData({
+        this._filmPopupComponent.setDeletingComment(comment);
+        this._filmPopupComponent.updateData({
           isDisabled: true,
           isDeleting: true
         });
         break;
       case State.ABORTING:
         if (this._mode === Mode.OPENED) {
-          this._popUpComponent.shake(resetFormState);
+          this._filmPopupComponent.setShakeAnimation(resetFormState);
         }
         break;
     }
