@@ -1,29 +1,33 @@
-import SmartView from './smart.js';
-import Chart from "chart.js";
+import Smart from './smart.js';
+import {render, remove} from '../utils/render.js';
+import {getGenresFrequencies, isWasWatchedToday, isWasWatchedLastWeek, isWasWatchedLastMounth, isWasWatchedLastYear} from '../utils/statistics.js';
+import {getHoursFromMins, getRemainMins} from '../utils/films.js';
+import {getUserRank} from '../utils/common.js';
+import {StatisticsCasesMap} from '../const.js';
+import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-import {countDuration, findTopGenre, countWatchedInPeriod} from "../utils/statistics.js";
-import {userGradeSettings} from '../const.js';
-import {getUserRank} from '../utils/user-profile.js';
 
-const renderChart = (statisticCtx, data) => {
-  const watchedInPeriod = countWatchedInPeriod(data);
 
-  const genresMap = watchedInPeriod ? findTopGenre(watchedInPeriod) : false;
-  const genreNames = genresMap ? genresMap.map((pare) => pare[0]) : [];
-  const genreNumbers = genresMap ? genresMap.map((pare) => pare[1]) : [];
+const getStatisticCaseFilms = {
+  [`statistic-all-time`]: (films) => films,
+  [`statistic-today`]: (films) => [...films].filter((film) => isWasWatchedToday(film.watchingDate)),
+  [`statistic-week`]: (films) => [...films].filter((film) => isWasWatchedLastWeek(film.watchingDate)),
+  [`statistic-month`]: (films) => [...films].filter((film) => isWasWatchedLastMounth(film.watchingDate)),
+  [`statistic-year`]: (films) => [...films].filter((film) => isWasWatchedLastYear(film.watchingDate)),
+};
 
+const renderCharts = (films, statisticCtx) => {
   const BAR_HEIGHT = 50;
 
-  // Обязательно рассчитайте высоту canvas, она зависит от количества элементов диаграммы
-  statisticCtx.height = BAR_HEIGHT * 5;
+  statisticCtx.height = BAR_HEIGHT * Object.keys(getGenresFrequencies(films)).length;
 
-  return new Chart(statisticCtx, {
+  const myChart = new Chart(statisticCtx, {
     plugins: [ChartDataLabels],
     type: `horizontalBar`,
     data: {
-      labels: genreNames,
+      labels: Object.keys(getGenresFrequencies(films)),
       datasets: [{
-        data: genreNumbers,
+        data: Object.values(getGenresFrequencies(films)),
         backgroundColor: `#ffe800`,
         hoverBackgroundColor: `#ffe800`,
         anchor: `start`
@@ -73,58 +77,63 @@ const renderChart = (statisticCtx, data) => {
       }
     }
   });
+
+  return myChart;
 };
 
-const createStatisticsTemplate = (data) => {
-  const watchedInPeriod = countWatchedInPeriod(data);
-  const watchedAmount = watchedInPeriod.length;
+const getTheMostFrequentGenre = (films) => {
 
-  const totalDuration = watchedAmount ? countDuration(watchedInPeriod) : 0;
-  const hours = totalDuration.hours ? totalDuration.hours : 0;
-  const minutes = totalDuration.minutes ? totalDuration.minutes : 0;
-  const topGenre = watchedAmount ? findTopGenre(watchedInPeriod)[0][0] : ``;
+  const genresObject = getGenresFrequencies(films);
 
-  const userRank = getUserRank(data.cards, userGradeSettings);
+  const maxValue = Math.max.apply(null, Object.values(genresObject));
+
+  return Object.keys(genresObject).filter((genre) => genresObject[genre] === maxValue);
+};
+
+const createStatistic = (activeRank, films, dateCase) => {
+  const watchedFilms = [...films].filter((movie)=>movie.isWatched);
+  const initialValue = 0;
+  const totalTimeWatched = watchedFilms.reduce((accumulator, currentMovie) => accumulator + currentMovie.filmDuration, initialValue);
 
   return (
     `<section class="statistic">
     <p class="statistic__rank">
       Your rank
       <img class="statistic__img" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
-      <span class="statistic__rank-label">${userRank}</span>
+      <span class="statistic__rank-label">${activeRank}</span>
     </p>
 
     <form action="https://echo.htmlacademy.ru/" method="get" class="statistic__filters">
       <p class="statistic__filters-description">Show stats:</p>
 
-      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-all-time" value="all-time">
+      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-all-time" value="all-time" ${dateCase === StatisticsCasesMap.ALLTIME ? `checked` : ``}>
       <label for="statistic-all-time" class="statistic__filters-label">All time</label>
 
-      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-today" value="today">
+      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-today" value="today"  ${dateCase === StatisticsCasesMap.TODAY ? `checked` : ``}>
       <label for="statistic-today" class="statistic__filters-label">Today</label>
 
-      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-week" value="week">
+      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-week" value="week" ${dateCase === StatisticsCasesMap.WEEK ? `checked` : ``}>
       <label for="statistic-week" class="statistic__filters-label">Week</label>
 
-      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-month" value="month">
+      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-month" value="month" ${dateCase === StatisticsCasesMap.MOUNTH ? `checked` : ``}>
       <label for="statistic-month" class="statistic__filters-label">Month</label>
 
-      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-year" value="year">
+      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-year" value="year" ${dateCase === StatisticsCasesMap.YEAR ? `checked` : ``}>
       <label for="statistic-year" class="statistic__filters-label">Year</label>
     </form>
 
     <ul class="statistic__text-list">
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">You watched</h4>
-        <p class="statistic__item-text">${watchedAmount}<span class="statistic__item-description">movies</span></p>
+        <p class="statistic__item-text">${watchedFilms.length} <span class="statistic__item-description">movies</span></p>
       </li>
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">Total duration</h4>
-        <p class="statistic__item-text">${hours}<span class="statistic__item-description">h</span>${minutes}<span class="statistic__item-description">m</span></p>
+        <p class="statistic__item-text">${watchedFilms.length ? `${getHoursFromMins(totalTimeWatched)}<span class="statistic__item-description">h</span> ${getRemainMins(totalTimeWatched)} <span class="statistic__item-description">m</span>` : ``}</p>
       </li>
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">Top genre</h4>
-        <p class="statistic__item-text">${topGenre}</p>
+        <p class="statistic__item-text">${watchedFilms.length ? getTheMostFrequentGenre(watchedFilms)[0] : ``}</p>
       </li>
     </ul>
 
@@ -136,58 +145,51 @@ const createStatisticsTemplate = (data) => {
   );
 };
 
-export default class Statistics extends SmartView {
-  constructor(films) {
+export default class Statistcs extends Smart {
+  constructor(films, statisticContainer) {
     super();
 
-    this._data = {
-      cards: films,
-      period: `all-time`
-    };
-
-    this._chart = null;
-    this._periodChangeHandler = this._periodChangeHandler.bind(this);
-
+    this._statisticContainer = statisticContainer;
+    this._films = [...films].filter((film)=> film.isWatched);
+    this._userRank = getUserRank(this._films.length);
     this._setChart();
-    this._setPeriodChangeHandler();
-    this._setChecked(this._data.period);
   }
 
   getTemplate() {
-    return createStatisticsTemplate(this._data);
-  }
-
-  _setChart() {
-    if (this._chart !== null) {
-      this._chart = null;
-    }
-    const statisticCtx = this.getElement().querySelector(`.statistic__chart`);
-    this._chart = renderChart(statisticCtx, this._data);
-  }
-
-  _setPeriodChangeHandler() {
-    this.getElement().querySelector(`.statistic__filters`).addEventListener(`change`, this._periodChangeHandler);
-  }
-
-  _periodChangeHandler(evt) {
-    const period = evt.target.value;
-    if (!period) {
-      return;
-    }
-
-    this.updateData({
-      period
-    });
-
-    this._setChecked(this._data.period);
+    return createStatistic(this._userRank, this._filtredFilms, this._dateCase);
   }
 
   restoreHandlers() {
-    this._setPeriodChangeHandler();
-    this._setChart();
+    this._setInnerHandlers();
   }
 
-  _setChecked(period) {
-    this.getElement().querySelector(`input[value="${period}"]`).checked = true;
+  _setInnerHandlers() {
+    this.getElement().querySelectorAll(`.statistic__filters-label`).forEach((element) => {
+      element.addEventListener(`click`, (evt)=>{
+        evt.preventDefault();
+        this._setChart(element.getAttribute(`for`));
+      });
+    });
+  }
+
+  destroy() {
+    remove(this);
+  }
+
+  _setChart(dateCase = StatisticsCasesMap.ALLTIME) {
+    if (this._element !== null) {
+      this.destroy();
+      this._element = null;
+    }
+
+    this._dateCase = dateCase;
+    this._filtredFilms = getStatisticCaseFilms[this._dateCase](this._films);
+
+    render(this._statisticContainer, this.getElement());
+    this.restoreHandlers();
+    const filmsFiltredByCase = getStatisticCaseFilms[dateCase](this._films);
+    const statisticCtx = this.getElement().querySelector(`.statistic__chart`);
+
+    renderCharts(filmsFiltredByCase, statisticCtx);
   }
 }

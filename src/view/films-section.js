@@ -1,12 +1,12 @@
-import AbstractView from "./abstract.js";
+import AbstractView from './abstract.js';
 
-const createFilmsTemplate = () => {
+const createFilmsSectionTemplate = () => {
   return `<section class="films"></section>`;
 };
 
 export default class FilmsSection extends AbstractView {
 
   getTemplate() {
-    return createFilmsTemplate();
+    return createFilmsSectionTemplate();
   }
 }

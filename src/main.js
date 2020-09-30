@@ -1,63 +1,64 @@
-import {UpdateType} from './const.js';
-import {render, remove} from "./utils/render";
-
-import StatisticView from "./view/statistic.js";
-import FilmsSectionView from "./view/films-section.js";
-import StatisticsView from './view/statistics.js';
-
-import MoviesModel from "./model/movies.js";
-import FilterModel from "./model/filter.js";
-
-import MoviesPresenter from "./presenter/movies.js";
-import FilterPresenter from "./presenter/filter.js";
 import UserProfilePresenter from './presenter/user-profile.js';
+import FooterStatisticsView from './view/footer-statisctics.js';
+import MoviesPresenter from './presenter/movies.js';
+import MovieModel from './model/movies.js';
+import FilterModel from './model/filter.js';
+import FilterPresenter from "./presenter/filter.js";
+import StatisticView from './view/statistics.js';
 import Api from './api.js';
-
-
-let statisticComponent;
-const AUTHORIZATION = `Basic qr866jdzbbs`;
-const END_POINT = `https://12.ecmascript.pages.academy/cinemaddict`;
-
-const api = new Api(END_POINT, AUTHORIZATION);
-
-const handleStatisticClick = () => {
-  if (statisticComponent) {
-    remove(statisticComponent);
-  }
-  moviesPresenter.destroy();
-  statisticComponent = new StatisticsView(moviesModel.getMovies());
-  render(siteMainElement, statisticComponent);
-};
-
-const handleMenuItemClick = () => {
-  if (moviesPresenter.destroyed) {
-    moviesPresenter.init();
-    remove(statisticComponent);
-  }
-};
+import {render} from './utils/render.js';
+import {MenuItem, UpdateType, AUTHORIZATION, END_POINT} from './const.js';
 
 const siteMainElement = document.querySelector(`.main`);
-const headerContainer = document.querySelector(`.header`);
-const footerElement = document.querySelector(`.footer`);
-const footerStatistics = footerElement.querySelector(`.footer__statistics`);
+const siteFooterElement = document.querySelector(`.footer`);
+const siteHeaderElement = document.querySelector(`.header`);
 
+const api = new Api(END_POINT, AUTHORIZATION);
+const moviesModel = new MovieModel();
+const filtersModel = new FilterModel();
+const filterPresenter = new FilterPresenter(siteMainElement, filtersModel, moviesModel);
+const moviePresenter = new MoviesPresenter(siteMainElement, moviesModel, filtersModel, api);
 
-const moviesModel = new MoviesModel();
-const filterModel = new FilterModel();
-const filmsSection = new FilmsSectionView();
-const userProfilePresenter = new UserProfilePresenter(headerContainer, moviesModel);
-const filterPresenter = new FilterPresenter(siteMainElement, filterModel, moviesModel, handleStatisticClick, handleMenuItemClick);
-const moviesPresenter = new MoviesPresenter(filmsSection, moviesModel, filterModel, api);
+const handleSiteMenuClick = (menuItem) => {
+  if (menuItem === currentMenuMode) {
+    return;
+  }
 
-userProfilePresenter.init();
-render(siteMainElement, filmsSection.getElement());
+  switch (menuItem) {
+    case MenuItem.FILTER:
+      currentMenuMode = menuItem;
+      siteStatistic.destroy();
+      moviePresenter.init();
+      break;
+    case MenuItem.STATISTICS:
+      currentMenuMode = menuItem;
+      siteStatistic = new StatisticView(moviesModel.getMovies(), siteMainElement);
+      moviePresenter.destroy();
+      break;
+  }
+};
+
+let siteStatistic = null;
+let currentMenuMode = MenuItem.FILTER;
+
 filterPresenter.init();
-moviesPresenter.init();
+moviePresenter.init();
 
-api.getMovies()
-  .then((movies) => api.pullComments(movies))
-  .then((films) => {
-    MoviesModel.setMovies(UpdateType.INIT, films);
-    render(footerStatistics, new StatisticView(films.length).getElement());
-    filterPresenter.unlock();
+let films = null;
+api.getMovies().then((movies) => {
+  films = movies;
+  return Promise.all(movies.map((movie)=>api.getComments(movie.id)));
+}).then((comments) => {
+  films.forEach((film, index) => {
+    film.comments = comments[index];
   });
+  moviesModel.setMovies(UpdateType.INIT, films);
+  filterPresenter.turnOnFilters();
+  filterPresenter.setMenuClickHandler(handleSiteMenuClick);
+  const userProfilePresenter = new UserProfilePresenter(siteHeaderElement, moviesModel);
+  userProfilePresenter.init();
+  render(siteFooterElement, new FooterStatisticsView(moviesModel.getMovies().length));
+})
+.catch(() => {
+  moviesModel.setMovies(UpdateType.INIT, []);
+});
