@@ -1,9 +1,11 @@
 import AbstractView from './abstract.js';
 import {formatDateYear, getTimeFromMins} from '../utils/films.js';
+import {MAX_DESCRIPTION_LENGTH, CURRENT_DESCRIPTION_LENGTH} from '../const.js';
+
 
 const createSiteFilmCard = (film) => {
   const {name, rating, releaseDate, filmDuration, filmGenre, description, img, comments, isInWatchlist, isWatched, isFavorite} = film;
-  const newDescription = (description.length > 140) ? `${description.slice(0, 139)}...` : description;
+  const newDescription = (description.length > MAX_DESCRIPTION_LENGTH) ? `${description.slice(0, CURRENT_DESCRIPTION_LENGTH)}...` : description;
   const watchlistButtonClass = (isInWatchlist) ? `film-card__controls-item--active` : ``;
   const watchedButtonClass = (isWatched) ? `film-card__controls-item--active` : ``;
   const favoriteButtonClass = (isFavorite) ? `film-card__controls-item--active` : ``;
